@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="ko" class="theme-light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrisMax 4.10 모의 환자 치료 절차</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { interpolate-size: allow-keywords; }
+
+    /* 20% tone-down Vantive palette */
+    :root {
+      --plum:   #7E3578;
+      --pine:   #266B52;
+      --amber:  #C4700F;
+      --cream:  #FFFAEB;
+      --plum-light: rgba(126,53,120,0.10);
+      --pine-light:  rgba(38,107,82,0.10);
+      --amber-light: rgba(196,112,15,0.10);
+    }
+
+    html.theme-dark {
+      --bg: #0A0A0A; --surface: #141414; --surface-hover: #1C1C1C;
+      --border: rgba(255,255,255,0.06);
+      --text: #EDEDED; --text-secondary: #9A9A9A;
+      --accent: #9B50A0; --accent-secondary: #3A8C6C;
+      --positive: #10b981; --negative: #f43f5e; --warning: #f59e0b;
+      --plum-light: rgba(155,80,160,0.15);
+      --pine-light:  rgba(58,140,108,0.15);
+      --amber-light: rgba(196,112,15,0.15);
+    }
+    html.theme-light {
+      --bg: #F8F6F3; --surface: #FFFFFF; --surface-hover: #F5F3F0;
+      --border: rgba(0,0,0,0.07);
+      --text: #1A1208; --text-secondary: #6B6358;
+      --accent: #7E3578; --accent-secondary: #266B52;
+      --positive: #266B52; --negative: #C0392B; --warning: #C4700F;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+      background: var(--bg); color: var(--text);
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+      scrollbar-gutter: stable;
+    }
+    h1,h2,h3,h4,h5,h6 {
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      font-family: 'Noto Sans KR', 'Inter', sans-serif;
+    }
+    h1 { font-weight: 800; }
+    h2 { font-weight: 700; }
+    h3 { font-weight: 600; }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-32px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(126,53,120,0.3); }
+      50% { box-shadow: 0 0 0 8px rgba(126,53,120,0); }
+    }
+    .animate { animation: fadeInUp 0.65s ease-out both; }
+    .animate.delay-1 { animation-delay: 0.08s; }
+    .animate.delay-2 { animation-delay: 0.16s; }
+    .animate.delay-3 { animation-delay: 0.24s; }
+    .animate.delay-4 { animation-delay: 0.32s; }
+    .animate.delay-5 { animation-delay: 0.40s; }
+    .animate.delay-6 { animation-delay: 0.48s; }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+
+    @media print {
+      body { background: white !important; color: black !important; }
+      .viz-menu, .sticky-filter { display: none !important; }
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .phase-card { break-inside: avoid; }
+      * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+    @page { margin: 0.8in; }
+
+    /* ===== MENU ===== */
+    .viz-menu { position: fixed; top: 16px; right: 16px; z-index: 9999; }
+    .viz-menu-toggle {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(12px); transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .viz-menu-toggle:hover { background: var(--surface-hover); }
+    .viz-menu-dropdown {
+      position: absolute; top: 52px; right: 0; min-width: 200px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 8px;
+      opacity: 0; visibility: hidden; transform: translateY(-8px);
+      transition: all 0.2s; backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    .viz-menu-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .viz-menu-dropdown button {
+      width: 100%; padding: 10px 14px; border: none; border-radius: 8px;
+      background: transparent; color: var(--text); font-size: 14px;
+      font-family: inherit; cursor: pointer; text-align: left;
+      display: flex; align-items: center; gap: 10px; transition: background 0.15s;
+    }
+    .viz-menu-dropdown button:hover { background: var(--surface-hover); }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 72vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 100px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(126,53,120,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--plum-light);
+      border: 1px solid rgba(126,53,120,0.2);
+      color: var(--plum);
+      padding: 6px 16px; border-radius: 100px;
+      font-size: 13px; font-weight: 500; letter-spacing: 0.02em;
+      margin-bottom: 28px;
+    }
+    html.theme-dark .hero-badge { color: #C080C0; border-color: rgba(192,128,192,0.25); background: rgba(155,80,160,0.12); }
+    .hero h1 {
+      font-size: clamp(2.8rem, 6vw, 4.8rem);
+      max-width: 900px;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, var(--plum) 0%, var(--pine) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    html.theme-dark .hero h1 {
+      background: linear-gradient(135deg, #C080C0 0%, #5AB890 100%);
+      -webkit-background-clip: text; background-clip: text;
+    }
+    .hero-desc {
+      font-size: 1.15rem; color: var(--text-secondary);
+      max-width: 680px; line-height: 1.75;
+      margin-bottom: 40px;
+    }
+    .hero-stats {
+      display: flex; gap: 40px; flex-wrap: wrap; justify-content: center;
+    }
+    .hero-stat {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .hero-stat-num {
+      font-size: 2.2rem; font-weight: 800;
+      color: var(--plum); line-height: 1;
+    }
+    html.theme-dark .hero-stat-num { color: #C080C0; }
+    .hero-stat-label {
+      font-size: 0.85rem; color: var(--text-secondary); font-weight: 400;
+    }
+    .hero-divider {
+      width: 1px; height: 40px; background: var(--border);
+      align-self: center;
+    }
+
+    /* ===== WARNINGS BANNER ===== */
+    .warnings-section {
+      padding: 0 24px 64px;
+      max-width: 880px; margin: 0 auto;
+    }
+    .warning-card {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 20px 24px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      border-left: 4px solid;
+    }
+    .warning-card.danger {
+      background: rgba(192,57,43,0.07);
+      border-color: #C0392B;
+    }
+    .warning-card.info {
+      background: var(--pine-light);
+      border-color: var(--pine);
+    }
+    html.theme-dark .warning-card.danger { background: rgba(192,57,43,0.12); }
+    html.theme-dark .warning-card.info { background: rgba(58,140,108,0.12); }
+    .warning-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .warning-title {
+      font-size: 13px; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; margin-bottom: 6px;
+    }
+    .warning-card.danger .warning-title { color: #C0392B; }
+    .warning-card.info .warning-title { color: var(--pine); }
+    html.theme-dark .warning-card.info .warning-title { color: #5AB890; }
+    .warning-text {
+      font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;
+    }
+
+    /* ===== EQUIPMENT SECTION ===== */
+    .equipment-section {
+      padding: 0 24px 80px;
+      max-width: 960px; margin: 0 auto;
+    }
+    .section-header {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 32px;
+    }
+    .section-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .section-icon.plum { background: var(--plum-light); }
+    .section-icon.pine { background: var(--pine-light); }
+    .section-icon.amber { background: var(--amber-light); }
+    .section-title-group h2 {
+      font-size: 1.9rem; margin-bottom: 4px;
+    }
+    .section-subtitle {
+      font-size: 0.9rem; color: var(--text-secondary);
+    }
+    .equipment-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .equip-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .equip-card:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+    }
+    .equip-name {
+      font-size: 0.95rem; font-weight: 600;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .equip-desc {
+      font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;
+    }
+    .equip-tag {
+      display: inline-block; margin-top: 10px;
+      padding: 2px 10px; border-radius: 100px;
+      font-size: 11px; font-weight: 600;
+      background: var(--plum-light); color: var(--plum);
+    }
+    html.theme-dark .equip-tag { color: #C080C0; }
+
+    /* ===== STICKY FILTER (Phase navigation) ===== */
+    .sticky-filter {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      backdrop-filter: blur(16px);
+    }
+    .filter-inner {
+      max-width: 960px; margin: 0 auto;
+      display: flex; gap: 4px;
+      overflow-x: auto; padding: 12px 0;
+      scrollbar-width: none;
+    }
+    .filter-inner::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      white-space: nowrap;
+      padding: 7px 16px; border-radius: 100px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 13px; font-weight: 500;
+      font-family: inherit; cursor: pointer;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .filter-btn:hover { border-color: var(--plum); color: var(--plum); }
+    .filter-btn.active {
+      background: var(--plum); color: white;
+      border-color: var(--plum);
+    }
+    html.theme-dark .filter-btn.active { background: #9B50A0; border-color: #9B50A0; }
+
+    /* ===== PHASES SECTION ===== */
+    .phases-section {
+      padding: 64px 24px 100px;
+      max-width: 960px; margin: 0 auto;
+    }
+
+    /* ===== PHASE GROUP ===== */
+    .phase-group {
+      margin-bottom: 20px;
+    }
+    .phase-group[data-phase]:not(.show) { display: none; }
+    .phase-group.show { display: block; }
+
+    /* ===== PHASE CARD (main expandable) ===== */
+    .phase-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: box-shadow 0.25s;
+    }
+    .phase-card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+
+    .phase-summary {
+      display: flex; align-items: center; gap: 20px;
+      padding: 22px 28px;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+    }
+    .phase-summary::-webkit-details-marker { display: none; }
+
+    .phase-number {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 800;
+      flex-shrink: 0; transition: transform 0.2s;
+    }
+    .phase-card:hover .phase-number { transform: scale(1.05); }
+
+    .phase-meta { flex: 1; }
+    .phase-name {
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text); margin-bottom: 4px;
+    }
+    .phase-steps-label {
+      font-size: 0.82rem; color: var(--text-secondary);
+    }
+    .phase-chevron {
+      color: var(--text-secondary);
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
+    details[open] .phase-chevron { transform: rotate(180deg); }
+
+    .phase-body {
+      padding: 0 28px 28px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ===== STEPS LIST ===== */
+    .steps-list {
+      display: flex; flex-direction: column; gap: 0;
+      margin-top: 24px;
+    }
+    .step-item {
+      display: flex; gap: 20px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+      animation: fadeInUp 0.4s ease-out both;
+    }
+    .step-item:last-child { border-bottom: none; }
+
+    .step-num-col {
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+      flex-shrink: 0; width: 32px;
+    }
+    .step-dot {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .step-line {
+      width: 2px; flex: 1; min-height: 12px;
+      background: var(--border);
+      margin-top: 4px;
+    }
+    .step-item:last-child .step-line { display: none; }
+
+    .step-content { flex: 1; padding-top: 4px; }
+    .step-title {
+      font-size: 0.95rem; font-weight: 600;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .step-desc {
+      font-size: 0.875rem; color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* Sub-steps */
+    .sub-steps {
+      margin-top: 12px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .sub-step {
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .sub-step-num {
+      width: 22px; height: 22px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+      background: var(--surface-hover);
+      color: var(--text-secondary);
+    }
+    .sub-step-text {
+      font-size: 0.855rem; color: var(--text-secondary);
+      line-height: 1.6; padding-top: 2px;
+    }
+
+    /* Param table */
+    .param-table {
+      width: 100%; margin-top: 14px;
+      border-collapse: collapse; border-radius: 10px; overflow: hidden;
+    }
+    .param-table th {
+      background: var(--surface-hover);
+      padding: 9px 14px; font-size: 11px; font-weight: 600;
+      color: var(--text-secondary); text-align: left;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .param-table td {
+      padding: 9px 14px; font-size: 0.875rem;
+      border-top: 1px solid var(--border);
+      color: var(--text);
+    }
+    .param-table tr:first-child td { border-top: none; }
+    .param-val {
+      font-weight: 600; color: var(--plum);
+    }
+    html.theme-dark .param-val { color: #C080C0; }
+
+    /* Alert tags */
+    .alert-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 8px;
+      font-size: 12px; font-weight: 600;
+      margin-top: 12px; margin-right: 8px;
+    }
+    .alert-tag.warning {
+      background: rgba(192,57,43,0.09);
+      color: #C0392B;
+      border: 1px solid rgba(192,57,43,0.2);
+    }
+    .alert-tag.note {
+      background: var(--pine-light);
+      color: var(--pine);
+      border: 1px solid rgba(38,107,82,0.2);
+    }
+    html.theme-dark .alert-tag.note { color: #5AB890; border-color: rgba(90,184,144,0.25); }
+    .alert-tag.tip {
+      background: var(--amber-light);
+      color: var(--amber);
+      border: 1px solid rgba(196,112,15,0.2);
+    }
+    html.theme-dark .alert-tag.tip { color: #E0A050; border-color: rgba(224,160,80,0.25); }
+
+    /* Pressure display */
+    .pressure-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-top: 14px;
+    }
+    .pressure-card {
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+      text-align: center;
+    }
+    .pressure-dir {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--text-secondary); margin-bottom: 6px;
+    }
+    .pressure-val {
+      font-size: 1.15rem; font-weight: 800;
+    }
+    .pressure-card.access .pressure-val { color: var(--plum); }
+    .pressure-card.return .pressure-val { color: var(--pine); }
+    html.theme-dark .pressure-card.access .pressure-val { color: #C080C0; }
+    html.theme-dark .pressure-card.return .pressure-val { color: #5AB890; }
+
+    /* Timer badge */
+    .timer-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--pine-light);
+      border: 1px solid rgba(38,107,82,0.25);
+      border-radius: 100px; padding: 10px 20px;
+      margin-top: 14px;
+    }
+    .timer-text {
+      font-size: 1rem; font-weight: 700; color: var(--pine);
+    }
+    html.theme-dark .timer-text { color: #5AB890; }
+    .timer-label {
+      font-size: 0.82rem; color: var(--text-secondary);
+    }
+
+    /* Color variants for phase numbers */
+    .num-plum { background: var(--plum-light); color: var(--plum); }
+    .num-pine  { background: var(--pine-light);  color: var(--pine);  }
+    .num-amber { background: var(--amber-light); color: var(--amber); }
+    html.theme-dark .num-plum { color: #C080C0; }
+    html.theme-dark .num-pine  { color: #5AB890; }
+    html.theme-dark .num-amber { color: #E0A050; }
+
+    .dot-plum { background: var(--plum); color: white; }
+    .dot-pine  { background: var(--pine);  color: white; }
+    .dot-amber { background: var(--amber); color: white; }
+    html.theme-dark .dot-plum { background: #9B50A0; }
+    html.theme-dark .dot-pine  { background: #3A8C6C; }
+    html.theme-dark .dot-amber { background: #C47B2E; }
+
+    /* ===== PROGRESS INDICATOR ===== */
+    .progress-bar-section {
+      padding: 0 24px 56px;
+      max-width: 960px; margin: 0 auto;
+    }
+    .progress-track {
+      display: flex; gap: 0; align-items: center;
+      overflow-x: auto; padding: 4px 0;
+      scrollbar-width: none;
+    }
+    .progress-track::-webkit-scrollbar { display: none; }
+    .progress-step-item {
+      display: flex; align-items: center; gap: 0; flex-shrink: 0;
+    }
+    .prog-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+      background: var(--surface); border: 2px solid var(--border);
+      color: var(--text-secondary);
+      transition: all 0.3s;
+    }
+    .prog-dot.active { background: var(--plum); border-color: var(--plum); color: white; }
+    html.theme-dark .prog-dot.active { background: #9B50A0; border-color: #9B50A0; }
+    .prog-line { width: 24px; height: 2px; background: var(--border); }
+    .prog-line.done { background: var(--plum); }
+    html.theme-dark .prog-line.done { background: #9B50A0; }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      text-align: center; padding: 48px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-secondary); font-size: 13px;
+    }
+    .footer-logo { font-weight: 700; color: var(--plum); font-size: 15px; margin-bottom: 8px; }
+    html.theme-dark .footer-logo { color: #C080C0; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.2rem; }
+      .hero-stats { gap: 24px; }
+      .hero-divider { display: none; }
+      .phase-summary { padding: 18px 20px; gap: 14px; }
+      .phase-body { padding: 0 20px 20px; }
+      .pressure-grid { grid-template-columns: 1fr; }
+      .equipment-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 375px) {
+      body { overflow-x: hidden; }
+      .hero { padding: 80px 16px 60px; }
+      .hero h1 { font-size: 1.9rem; }
+      .phase-number { width: 36px; height: 36px; font-size: 13px; }
+      .filter-btn { font-size: 12px; padding: 6px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:10000;padding:8px 16px;background:var(--plum);color:white;text-decoration:none;border-radius:4px;" onfocus="this.style.cssText='position:fixed;left:16px;top:16px;z-index:10000;padding:8px 16px;background:var(--plum);color:white;text-decoration:none;border-radius:4px;'" onblur="this.style.cssText='position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;'">본문으로 건너뛰기</a>
+
+  <!-- MENU -->
+  <div class="viz-menu">
+    <button class="viz-menu-toggle" onclick="toggleMenu()" aria-label="메뉴">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+      </svg>
+    </button>
+    <div class="viz-menu-dropdown" id="vizMenuDropdown">
+      <button onclick="cycleTheme()"><span id="themeIcon">☀️</span><span id="themeLabel">라이트 모드</span></button>
+      <button onclick="downloadImage()"><span>📥</span><span>PNG 저장</span></button>
+      <button onclick="window.print()"><span>🖨️</span><span>인쇄 / PDF</span></button>
+    </div>
+  </div>
+
+  <main id="main-content" role="main">
+
+    <!-- HERO -->
+    <section role="banner">
+      <div class="hero">
+        <div class="hero-badge animate">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          PrisMax SW 3.5 · 섹션 4.10
+        </div>
+        <h1 class="animate delay-1">모의 환자 치료 절차</h1>
+        <p class="hero-desc animate delay-2">
+          PrisMax 제어 유닛의 올바른 작동을 검증하기 위한 시뮬레이션 절차입니다.<br>
+          물 또는 식염수를 이용하여 용액과 환자를 시뮬레이션합니다.
+        </p>
+        <div class="hero-stats animate delay-3">
+          <div class="hero-stat">
+            <span class="hero-stat-num" data-count="17">17</span>
+            <span class="hero-stat-label">전체 단계</span>
+          </div>
+          <div class="hero-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-num" data-count="10">10</span>
+            <span class="hero-stat-label">절차 단계</span>
+          </div>
+          <div class="hero-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-num" data-count="15">15</span>
+            <span class="hero-stat-label">최소 치료 시간(분)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WARNINGS -->
+    <section aria-label="주의사항" class="warnings-section reveal">
+      <div class="warning-card danger">
+        <span class="warning-icon">⚠️</span>
+        <div>
+          <div class="warning-title">경고</div>
+          <div class="warning-text">PrisMax 시스템 서비스 중에는 환자를 연결해서는 안 됩니다.</div>
+        </div>
+      </div>
+      <div class="warning-card danger">
+        <span class="warning-icon">⚠️</span>
+        <div>
+          <div class="warning-title">경고</div>
+          <div class="warning-text">특정 알람이 발생하면 시스템이 테스트에 실패할 수 있습니다. 문제가 수정되고 시스템이 테스트를 통과할 때까지 사용하지 마십시오.</div>
+        </div>
+      </div>
+      <div class="warning-card info">
+        <span class="warning-icon">📝</span>
+        <div>
+          <div class="warning-title">참고</div>
+          <div class="warning-text">물 또는 식염수 용기를 사용하여 환자를 시뮬레이션하며 모의 환자 치료를 수행하십시오.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EQUIPMENT -->
+    <section aria-label="필요 장비" class="equipment-section reveal">
+      <div class="section-header">
+        <div class="section-icon amber">🔧</div>
+        <div class="section-title-group">
+          <h2>필요 장비</h2>
+          <p class="section-subtitle">표 4-12 · 모의 환자 치료에 필요한 장비 목록</p>
+        </div>
+      </div>
+      <div class="equipment-grid">
+        <div class="equip-card">
+          <div class="equip-name">PrisMax 소모품 세트</div>
+          <div class="equip-desc">M100 또는 해당되는 환자 튜빙 세트 (권장)</div>
+          <span class="equip-tag">필수</span>
+        </div>
+        <div class="equip-card">
+          <div class="equip-name">TherMax 소모품 세트</div>
+          <div class="equip-desc">BW1001 혈액 온열 백 (해당되는 경우)</div>
+          <span class="equip-tag" style="background:var(--pine-light);color:var(--pine);">선택</span>
+        </div>
+        <div class="equip-card">
+          <div class="equip-name">식염수 / 수돗물</div>
+          <div class="equip-desc">1L 백 — 프라이밍, 투석액, 대체액, 환자 시뮬레이션용</div>
+          <span class="equip-tag">필수</span>
+        </div>
+        <div class="equip-card">
+          <div class="equip-name">눈금 실린더 (선택)</div>
+          <div class="equip-desc">수돗물을 채운 1000ml 눈금 실린더를 환자 시뮬레이션에 사용 가능</div>
+          <span class="equip-tag" style="background:var(--pine-light);color:var(--pine);">선택</span>
+        </div>
+        <div class="equip-card">
+          <div class="equip-name">카테터 8F (선택)</div>
+          <div class="equip-desc">1L 백 또는 눈금 실린더와 함께 사용하여 환자 및 일반적인 치료 중 압력을 시뮬레이션</div>
+          <span class="equip-tag" style="background:var(--pine-light);color:var(--pine);">선택</span>
+        </div>
+        <div class="equip-card">
+          <div class="equip-name">주사기</div>
+          <div class="equip-desc">크기는 주사기 홀더에 따라 결정</div>
+          <span class="equip-tag">필수</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHASE NAVIGATION (sticky) -->
+    <div class="sticky-filter" role="navigation" aria-label="절차 단계 필터">
+      <div class="filter-inner">
+        <button class="filter-btn active" onclick="filterPhase('all', this)">전체</button>
+        <button class="filter-btn" onclick="filterPhase('startup', this)">시스템 시작</button>
+        <button class="filter-btn" onclick="filterPhase('setup', this)">셋업</button>
+        <button class="filter-btn" onclick="filterPhase('therapy', this)">치료 진행</button>
+        <button class="filter-btn" onclick="filterPhase('end', this)">치료 종료</button>
+      </div>
+    </div>
+
+    <!-- PHASES -->
+    <section aria-label="절차 단계" class="phases-section">
+      <div class="section-header reveal" style="margin-bottom:36px;">
+        <div class="section-icon plum">📋</div>
+        <div class="section-title-group">
+          <h2>단계별 절차</h2>
+          <p class="section-subtitle">각 단계를 클릭하면 세부 내용을 확인할 수 있습니다</p>
+        </div>
+      </div>
+
+      <!-- Phase 1: 시스템 시작 -->
+      <div class="phase-group show" data-category="startup">
+        <details class="phase-card reveal" open>
+          <summary class="phase-summary">
+            <div class="phase-number num-plum">1</div>
+            <div class="phase-meta">
+              <div class="phase-name">시스템 시작</div>
+              <div class="phase-steps-label">단계 1 – 2 · 전원 켜기 및 신규 환자 등록</div>
+            </div>
+            <svg class="phase-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="phase-body">
+            <div class="steps-list">
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-plum">1</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">PrisMax 시스템 전원 켜기</div>
+                  <div class="step-desc">TherMax가 설치된 경우 함께 전원을 켭니다. 시작 시 시스템은 여러 SST를 자동으로 수행합니다.</div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-plum">2</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">신규 환자 선택</div>
+                  <div class="step-desc">시작 화면에서 <strong>신규 환자(New Patient)</strong>를 선택한 후 설정 데이터를 입력합니다.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Phase 2: 환자 정보 -->
+      <div class="phase-group show" data-category="setup">
+        <details class="phase-card reveal">
+          <summary class="phase-summary">
+            <div class="phase-number num-plum">2</div>
+            <div class="phase-meta">
+              <div class="phase-name">셋업 — 환자 정보</div>
+              <div class="phase-steps-label">단계 3 – 4 · 환자 기본 정보 입력</div>
+            </div>
+            <svg class="phase-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="phase-body">
+            <div class="steps-list">
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-plum">3</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">환자 정보 입력</div>
+                  <div class="step-desc">다음 설정값을 입력합니다:</div>
+                  <table class="param-table">
+                    <tr><th>항목</th><th>값</th></tr>
+                    <tr><td>환자 ID (Patient ID)</td><td class="param-val">Test</td></tr>
+                    <tr><td>보조 ID (Secondary ID)</td><td class="param-val">선택 사항</td></tr>
+                    <tr><td>체중 (Weight)</td><td class="param-val">55 kg</td></tr>
+                    <tr><td>헤마토크릿 (Hematocrit)</td><td class="param-val">30%</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-plum">4</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">확인 (Accept)</div>
+                  <div class="step-desc"><strong>Accept</strong> 버튼을 눌러 환자 정보를 확인합니다.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Phase 3: 치료법 선택 -->
+      <div class="phase-group show" data-category="setup">
+        <details class="phase-card reveal">
+          <summary class="phase-summary">
+            <div class="phase-number num-pine">3</div>
+            <div class="phase-meta">
+              <div class="phase-name">셋업 — 치료법 선택</div>
+              <div class="phase-steps-label">단계 5 – 6 · CVVHDF 치료 모드 설정</div>
+            </div>
+            <svg class="phase-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="phase-body">
+            <div class="steps-list">
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-pine">5</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">치료법 선택 (Setup - Therapy)</div>
+                  <div class="step-desc">다음과 같이 치료 설정을 선택합니다:</div>
+                  <table class="param-table">
+                    <tr><th>항목</th><th>설정값</th></tr>
+                    <tr><td>프로파일 (Profile)</td><td class="param-val">없음 (None)</td></tr>
+                    <tr><td>치료법 (Therapy)</td><td class="param-val">CVVHDF</td></tr>
+                    <tr><td>세트 (Set)</td><td class="param-val">M100 (또는 해당 세트)</td></tr>
+                    <tr><td>항응고제 (Anticoagulation)</td><td class="param-val">Syringe Rx</td></tr>
+                    <tr><td>혈액 온열기 (Blood Warmer)</td><td class="param-val">TherMax (설치 시) / 없음</td></tr>
+                    <tr><td>자동 유출 (Auto-effluent)</td><td class="param-val">아니오 (No)</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-pine">6</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">확인 (Accept)</div>
+                  <div class="step-desc"><strong>Accept</strong> 버튼을 눌러 치료법 설정을 확인합니다.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Phase 4: 처방 설정 -->
+      <div class="phase-group show" data-category="setup">
+        <details class="phase-card reveal">
+          <summary class="phase-summary">
+            <div class="phase-number num-pine">4</div>
+            <div class="phase-meta">
+              <div class="phase-name">셋업 — 처방 설정</div>
+              <div class="phase-steps-label">단계 7 – 8 · 유량 및 처방 파라미터 입력</div>
+            </div>
+            <svg class="phase-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="phase-body">
+            <div class="steps-list">
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-pine">7</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">처방 입력 (Setup - Prescription)</div>
+                  <div class="step-desc">다음 처방 설정값을 입력합니다:</div>
+                  <table class="param-table">
+                    <tr><th>파라미터</th><th>값</th></tr>
+                    <tr><td>혈류 속도 (BFR)</td><td class="param-val">180 ml/min</td></tr>
+                    <tr><td>전-혈액 희석 (PBP)</td><td class="param-val">1,100 ml/h</td></tr>
+                    <tr><td>주사기 (Syr)</td><td class="param-val">0 ml/h</td></tr>
+                    <tr><td>유체 제거 (PFR)</td><td class="param-val">240 ml/h</td></tr>
+                    <tr><td>투석액 (Dia)</td><td class="param-val">1,200 ml/h</td></tr>
+                    <tr><td>대체액 (Rep)</td><td class="param-val">1,300 ml/h</td></tr>
+                    <tr><td>희석 방향 (Dilution)</td><td class="param-val">후 희석 (Post)</td></tr>
+                    <tr><td>기타 설정</td><td class="param-val">기본값 (Default)</td></tr>
+                    <tr><td>혈액 복귀 온도</td><td class="param-val">37°C (TherMax 설치 시)</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-pine">8</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">전체 확인 (Confirm All)</div>
+                  <div class="step-desc"><strong>Confirm All</strong> 버튼을 눌러 처방 설정 전체를 확인합니다.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Phase 5: 세트 장착 -->
+      <div class="phase-group show" data-category="setup">
+        <details class="phase-card reveal">
+          <summary class="phase-summary">
+            <div class="phase-number num-amber">5</div>
+            <div class="phase-meta">
+              <div class="phase-name">셋업 — 세트 장착</div>
+              <div class="phase-steps-label">단계 9 – 10 · 소모품 세트 설치 및 연결</div>
+            </div>
+            <svg class="phase-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="phase-body">
+            <div class="steps-list">
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-amber">9</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">세트 설치 (Setup - Sets)</div>
+                  <div class="sub-steps">
+                    <div class="sub-step">
+                      <div class="sub-step-num">9.1</div>
+                      <div class="sub-step-text">세트를 스캔하거나 선택합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">9.2</div>
+                      <div class="sub-step-text">세트를 로더에 부착합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">9.3</div>
+                      <div class="sub-step-text"><strong>Next</strong>를 누릅니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">9.4</div>
+                      <div class="sub-step-text">화면에 표시된 대로 세트 구성 요소를 연결합니다. 화면의 모든 구성 요소 옆에 체크 표시가 나타나는지 확인합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">9.5</div>
+                      <div class="sub-step-text">모든 유체 라인이 클램프 해제되어 있는지 확인합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">9.6</div>
+                      <div class="sub-step-text"><strong>Load Set</strong>을 누릅니다.</div>
+                    </div>
+                  </div>
+                  <span class="alert-tag note">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    TherMax 포함 시 필터와 탈기 챔버 사이 루어 커넥터에 튜빙 세트를 연결하세요.
+                  </span>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-amber">10</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">확인 (Accept)</div>
+                  <div class="step-desc"><strong>Accept</strong> 버튼을 눌러 세트 장착을 완료합니다.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Phase 6: 유체 연결 & 프라이밍 -->
+      <div class="phase-group show" data-category="setup">
+        <details class="phase-card reveal">
+          <summary class="phase-summary">
+            <div class="phase-number num-amber">6</div>
+            <div class="phase-meta">
+              <div class="phase-name">셋업 — 유체 연결 및 프라이밍</div>
+              <div class="phase-steps-label">단계 11 – 12 · 유체 백 연결, 주사기 장착, 프라이밍</div>
+            </div>
+            <svg class="phase-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="phase-body">
+            <div class="steps-list">
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-amber">11</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">유체 연결 (Setup - Fluids)</div>
+                  <div class="sub-steps">
+                    <div class="sub-step">
+                      <div class="sub-step-num">11.1</div>
+                      <div class="sub-step-text">화면에 표시된 대로 각 백을 연결하고 걸어둡니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">11.2</div>
+                      <div class="sub-step-text">완료되면 <strong>Next</strong>를 누릅니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">11.3</div>
+                      <div class="sub-step-text">주사기 플런저 잠금을 열고 <strong>Arm Down</strong>을 누릅니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">11.4</div>
+                      <div class="sub-step-text">주사기 브랜드와 크기를 확인합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">11.5</div>
+                      <div class="sub-step-text">표시된 대로 주사기를 설치하고 <strong>Arm Up</strong>을 누릅니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">11.6</div>
+                      <div class="sub-step-text">주사기 플런저 잠금을 닫고 <strong>Accept</strong>를 눌러 주사기를 테스트합니다.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-amber">12</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">프라이밍 (Setup - Prime)</div>
+                  <div class="sub-steps">
+                    <div class="sub-step">
+                      <div class="sub-step-num">12.1</div>
+                      <div class="sub-step-text">모든 클램프, 백 및 연결 상태가 올바른지 확인합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">12.2</div>
+                      <div class="sub-step-text"><strong>Prime</strong>을 누릅니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">12.3</div>
+                      <div class="sub-step-text">프라이밍 과정을 모니터링합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">12.4</div>
+                      <div class="sub-step-text">화면에 "Prime Completed"가 표시되면 세트의 공기를 검사하고 필요시 조정합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">12.5</div>
+                      <div class="sub-step-text"><strong>Accept</strong>를 누릅니다.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Phase 7: 검토 -->
+      <div class="phase-group show" data-category="setup">
+        <details class="phase-card reveal">
+          <summary class="phase-summary">
+            <div class="phase-number num-plum">7</div>
+            <div class="phase-meta">
+              <div class="phase-name">셋업 — 처방 검토</div>
+              <div class="phase-steps-label">단계 13 · 모든 설정 최종 검토</div>
+            </div>
+            <svg class="phase-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="phase-body">
+            <div class="steps-list">
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-plum">13</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">처방 설정 최종 검토 (Setup - Review)</div>
+                  <div class="sub-steps">
+                    <div class="sub-step">
+                      <div class="sub-step-num">13.1</div>
+                      <div class="sub-step-text">처방 설정값과 선택 사항을 검토하고 필요시 변경합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">13.2</div>
+                      <div class="sub-step-text"><strong>Accept</strong>를 눌러 최종 확인합니다.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Phase 8: 환자 연결 -->
+      <div class="phase-group show" data-category="setup">
+        <details class="phase-card reveal">
+          <summary class="phase-summary">
+            <div class="phase-number num-plum">8</div>
+            <div class="phase-meta">
+              <div class="phase-name">셋업 — 환자 연결 및 치료 시작</div>
+              <div class="phase-steps-label">단계 14 · 라인 연결 및 치료 시작</div>
+            </div>
+            <svg class="phase-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="phase-body">
+            <div class="steps-list">
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-plum">14</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">환자 연결 (Setup - Connect Patient)</div>
+                  <div class="sub-steps">
+                    <div class="sub-step">
+                      <div class="sub-step-num">14.1</div>
+                      <div class="sub-step-text">화면에 표시된 대로 모든 라인을 클램프하고 경로를 변경합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">14.2</div>
+                      <div class="sub-step-text">모든 유체 라인이 클램프 해제되어 있는지 확인합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">14.3</div>
+                      <div class="sub-step-text"><strong>Confirm All</strong>을 누릅니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">14.4</div>
+                      <div class="sub-step-text">주사기 내 액체 용량(ml)을 기록합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">14.5</div>
+                      <div class="sub-step-text"><strong>Start Treatment</strong>를 눌러 치료를 시작합니다.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Phase 9: 치료 진행 -->
+      <div class="phase-group show" data-category="therapy">
+        <details class="phase-card reveal">
+          <summary class="phase-summary">
+            <div class="phase-number num-pine">9</div>
+            <div class="phase-meta">
+              <div class="phase-name">치료 진행 및 모니터링</div>
+              <div class="phase-steps-label">단계 15 · 최소 15분 이상 운전 및 압력 조정</div>
+            </div>
+            <svg class="phase-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="phase-body">
+            <div class="steps-list">
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-pine">15</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">치료 모니터링 (Therapy)</div>
+                  <div class="sub-steps">
+                    <div class="sub-step">
+                      <div class="sub-step-num">15.1</div>
+                      <div class="sub-step-text">치료를 모니터링합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">15.2</div>
+                      <div class="sub-step-text">기록 화면(History screen)에 표시된 치료 시작 시간을 기록합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">15.3</div>
+                      <div class="sub-step-text">혈액 펌프 속도를 조정하고 액세스 및 복귀 라인을 제한하여 아래 목표 압력을 달성합니다.</div>
+                    </div>
+                  </div>
+                  <div class="pressure-grid">
+                    <div class="pressure-card access">
+                      <div class="pressure-dir">액세스 압력</div>
+                      <div class="pressure-val">–25 ~ –150 mmHg</div>
+                    </div>
+                    <div class="pressure-card return">
+                      <div class="pressure-dir">복귀 압력</div>
+                      <div class="pressure-val">+25 ~ +150 mmHg</div>
+                    </div>
+                  </div>
+                  <div class="sub-steps" style="margin-top:16px;">
+                    <div class="sub-step">
+                      <div class="sub-step-num">15.4</div>
+                      <div class="sub-step-text">모의 치료를 최소 15분 이상 운전합니다.</div>
+                    </div>
+                  </div>
+                  <div class="timer-badge">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    <span class="timer-text">최소 15분</span>
+                    <span class="timer-label">TherMax 설치 시: 온열기 가열 중(아이콘 점등) 확인</span>
+                  </div>
+                  <div class="sub-steps" style="margin-top:16px;">
+                    <div class="sub-step">
+                      <div class="sub-step-num">15.5</div>
+                      <div class="sub-step-text">15분 경과 후 예상치 못한 알람이 없는지 확인합니다. 액세스/복귀 압력 알람은 시뮬레이션으로 인한 것으로 정상 작동 실패를 의미하지 않습니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">15.6</div>
+                      <div class="sub-step-text"><strong>Stop</strong>을 누릅니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">15.7</div>
+                      <div class="sub-step-text"><strong>End Treatment</strong>를 누릅니다.</div>
+                    </div>
+                  </div>
+                  <span class="alert-tag tip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                    PM 절차에서 요구되는 추가 테스트가 있는 경우 이 15분 동안 수행하십시오.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Phase 10: 치료 종료 -->
+      <div class="phase-group show" data-category="end">
+        <details class="phase-card reveal">
+          <summary class="phase-summary">
+            <div class="phase-number num-amber">10</div>
+            <div class="phase-meta">
+              <div class="phase-name">치료 종료 및 세트 분리</div>
+              <div class="phase-steps-label">단계 16 – 17 · 세트 폐기 및 환자 분리</div>
+            </div>
+            <svg class="phase-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="phase-body">
+            <div class="steps-list">
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-amber">16</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">치료 종료 / 세트 폐기 (End - End Treatment / Discard Set)</div>
+                  <div class="sub-steps">
+                    <div class="sub-step">
+                      <div class="sub-step-num">16.1</div>
+                      <div class="sub-step-text"><strong>Discard All</strong>을 선택합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">16.2</div>
+                      <div class="sub-step-text">혈액 반환(Return Blood): <strong>아니오(No)</strong>를 선택합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">16.3</div>
+                      <div class="sub-step-text"><strong>Accept</strong>를 누릅니다.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num-col">
+                  <div class="step-dot dot-amber">17</div>
+                  <div class="step-line"></div>
+                </div>
+                <div class="step-content">
+                  <div class="step-title">환자 분리 (Therapy - Disconnect Patient)</div>
+                  <div class="sub-steps">
+                    <div class="sub-step">
+                      <div class="sub-step-num">17.1</div>
+                      <div class="sub-step-text">화면에 표시된 대로 모든 라인을 클램프하고 분리합니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">17.2</div>
+                      <div class="sub-step-text">완료되면 <strong>Confirm All</strong>을 누릅니다.</div>
+                    </div>
+                    <div class="sub-step">
+                      <div class="sub-step-num">17.3</div>
+                      <div class="sub-step-text"><strong>Accept</strong>를 눌러 절차를 완료합니다.</div>
+                    </div>
+                  </div>
+                  <span class="alert-tag note">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    모의 치료 완료는 PrisMax 시스템이 올바르게 작동하고 있음을 나타냅니다.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-logo">Vantive · PrisMax</div>
+    <div>서비스 매뉴얼 SW 3.5 · 섹션 4.10 · AW8345 Rev B · JAN 2025</div>
+    <div style="margin-top:6px; font-size:12px; opacity:0.6;">본 문서는 서비스 참조용이며 공식 매뉴얼을 대체하지 않습니다.</div>
+  </footer>
+
+  <script>
+    // ===== THEME =====
+    var THEMES = ['light', 'dark'];
+    var themeIdx = 0;
+
+    function applyTheme(theme) {
+      document.documentElement.className = 'theme-' + theme;
+      var icon = document.getElementById('themeIcon');
+      var label = document.getElementById('themeLabel');
+      if (theme === 'dark') {
+        if (icon) icon.textContent = '🌙';
+        if (label) label.textContent = '다크 모드';
+      } else {
+        if (icon) icon.textContent = '☀️';
+        if (label) label.textContent = '라이트 모드';
+      }
+      try { localStorage.setItem('viz-theme', theme); } catch(e) {}
+    }
+
+    function cycleTheme() {
+      themeIdx = (themeIdx + 1) % THEMES.length;
+      applyTheme(THEMES[themeIdx]);
+    }
+
+    (function() {
+      var saved;
+      try { saved = localStorage.getItem('viz-theme'); } catch(e) {}
+      var preferred = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      themeIdx = THEMES.indexOf(preferred);
+      if (themeIdx < 0) themeIdx = 0;
+      applyTheme(THEMES[themeIdx]);
+    })();
+
+    // ===== MENU =====
+    function toggleMenu() {
+      var d = document.getElementById('vizMenuDropdown');
+      if (d) d.classList.toggle('open');
+    }
+    document.addEventListener('click', function(e) {
+      var menu = document.querySelector('.viz-menu');
+      var dropdown = document.getElementById('vizMenuDropdown');
+      if (menu && !menu.contains(e.target) && dropdown) {
+        dropdown.classList.remove('open');
+      }
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        var d = document.getElementById('vizMenuDropdown');
+        if (d) d.classList.remove('open');
+      }
+    });
+
+    // ===== DOWNLOAD PNG =====
+    function downloadImage() {
+      if (typeof htmlToImage === 'undefined') {
+        alert('이미지 저장 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도하세요.');
+        return;
+      }
+      htmlToImage.toPng(document.body).then(function(dataUrl) {
+        var link = document.createElement('a');
+        link.download = 'prismax-4.10-simulated-treatment.png';
+        link.href = dataUrl;
+        link.click();
+      }).catch(function(err) {
+        console.error('PNG 저장 실패:', err);
+      });
+    }
+
+    // ===== FILTER =====
+    function filterPhase(category, btn) {
+      // Update button states
+      var btns = document.querySelectorAll('.filter-btn');
+      btns.forEach(function(b) { b.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+
+      var groups = document.querySelectorAll('.phase-group');
+      var firstVisible = null;
+      groups.forEach(function(g) {
+        if (category === 'all') {
+          g.classList.add('show');
+          if (!firstVisible) firstVisible = g;
+        } else {
+          var cat = g.getAttribute('data-category');
+          if (cat === category) {
+            g.classList.add('show');
+            if (!firstVisible) firstVisible = g;
+          } else {
+            g.classList.remove('show');
+          }
+        }
+      });
+
+      // Scroll to first visible phase, offsetting for sticky filter bar
+      if (firstVisible) {
+        var stickyBar = document.querySelector('.sticky-filter');
+        var stickyH = stickyBar ? stickyBar.getBoundingClientRect().height : 60;
+        var extraGap = 16; // a little breathing room above the card
+        var targetY = firstVisible.getBoundingClientRect().top + window.pageYOffset - stickyH - extraGap;
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
+      }
+    }
+
+    // ===== SCROLL REVEAL =====
+    document.addEventListener('DOMContentLoaded', function() {
+      var revealEls = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+        revealEls.forEach(function(el) { observer.observe(el); });
+      } else {
+        revealEls.forEach(function(el) { el.classList.add('visible'); });
+      }
+
+      // Number counters
+      var counterEls = document.querySelectorAll('[data-count]');
+      var counterObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            animateCounter(entry.target);
+            counterObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      counterEls.forEach(function(el) { counterObserver.observe(el); });
+    });
+
+    function animateCounter(el) {
+      var target = parseInt(el.getAttribute('data-count'), 10);
+      var start = 0;
+      var duration = 1200;
+      var startTime = null;
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        var progress = Math.min((timestamp - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(start + (target - start) * eased);
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+  </script>
+</body>
+</html>
