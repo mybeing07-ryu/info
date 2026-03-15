@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrisMax System Self-Tests · Service Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { interpolate-size: allow-keywords; }
+
+    /* ── VANTIVE PALETTE (toned down ~30%) ─────────────────────── */
+    :root {
+      --v-plum:       #8B5287;   /* #72256B → softer */
+      --v-plum-d:     #6E3C6B;
+      --v-plum-bg:    rgba(139,82,135,0.08);
+      --v-pine:       #3E7A67;   /* #105742 → lighter */
+      --v-pine-bg:    rgba(62,122,103,0.09);
+      --v-amber:      #C47B2E;   /* #D4700A → muted */
+      --v-amber-bg:   rgba(196,123,46,0.09);
+      --v-danger:     #B04545;
+      --v-danger-bg:  rgba(176,69,69,0.08);
+      --v-blue:       #4472C0;
+      --v-blue-bg:    rgba(68,114,192,0.08);
+      --v-cream:      #FEFDF5;
+    }
+
+    /* ── CLASS-BASED THEMES ─────────────────────────────────────── */
+    html.theme-light {
+      --bg: #F7F6F2;
+      --surface: #FFFFFF;
+      --surface-hover: #F9F8F5;
+      --surface-2: #F2F1EC;
+      --border: rgba(0,0,0,0.07);
+      --border-strong: rgba(0,0,0,0.12);
+      --text: #1A1A1A;
+      --text-secondary: #6B6B6B;
+      --text-tertiary: #A8A8A8;
+      --accent: var(--v-plum);
+      --accent-secondary: var(--v-pine);
+      --positive: var(--v-pine);
+      --negative: var(--v-danger);
+      --warning: var(--v-amber);
+      --shadow-sm: 0 1px 4px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+    }
+    html.theme-dark {
+      --bg: #111110;
+      --surface: #1C1B18;
+      --surface-hover: #242320;
+      --surface-2: #2A2925;
+      --border: rgba(255,255,255,0.06);
+      --border-strong: rgba(255,255,255,0.12);
+      --text: #EDEBE3;
+      --text-secondary: #9A9890;
+      --text-tertiary: #5A5850;
+      --accent: #B07AAC;
+      --accent-secondary: #5EA88F;
+      --positive: #5EA88F;
+      --negative: #D07070;
+      --warning: #D4974A;
+      --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text);
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
+      letter-spacing: -0.01em; transition: background 0.3s, color 0.3s;
+    }
+    h1,h2,h3,h4 { letter-spacing: -0.03em; text-wrap: balance; color: var(--text); }
+    h1 { font-weight: 800; font-size: 3.5rem; line-height: 1.05; }
+    h2 { font-weight: 700; font-size: 2.2rem; line-height: 1.1; }
+    h3 { font-weight: 600; font-size: 1.5rem; line-height: 1.2; }
+    h4 { font-weight: 600; font-size: 1.05rem; }
+    p { color: var(--text); }
+
+    /* ── LAYOUT ─────────────────────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── HERO ────────────────────────────────────────────────────── */
+    .hero {
+      padding: 96px 24px 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 50% at 50% -10%, rgba(139,82,135,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--v-plum-bg); border: 1px solid rgba(139,82,135,0.2);
+      color: var(--v-plum); border-radius: 20px;
+      padding: 5px 14px; font-size: 12px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 24px;
+    }
+    html.theme-dark .hero-eyebrow { color: #C095BC; background: rgba(139,82,135,0.15); border-color: rgba(139,82,135,0.3); }
+    .hero h1 { margin-bottom: 20px; max-width: 700px; margin-left: auto; margin-right: auto; }
+    .hero-sub {
+      font-size: 1.1rem; color: var(--text-secondary); max-width: 520px;
+      margin: 0 auto 48px; line-height: 1.7;
+    }
+    .hero-stats {
+      display: inline-flex; gap: 0; border: 1px solid var(--border-strong);
+      border-radius: 16px; overflow: hidden; background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-item {
+      padding: 18px 32px; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-size: 2rem; font-weight: 800; color: var(--accent); line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .stat-lbl { font-size: 11px; color: var(--text-tertiary); font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+    /* ── STICKY NAV / FILTER ──────────────────────────────────────── */
+    .filter-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(247,246,242,0.88); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      transition: background 0.3s;
+    }
+    html.theme-dark .filter-bar {
+      background: rgba(17,17,16,0.88);
+    }
+    .filter-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px;
+      display: flex; gap: 4px; overflow-x: auto;
+      scrollbar-width: none; padding-top: 12px; padding-bottom: 12px;
+    }
+    .filter-inner::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      flex-shrink: 0; padding: 7px 16px; border-radius: 20px;
+      font-size: 13px; font-weight: 500; border: 1.5px solid transparent;
+      background: transparent; color: var(--text-secondary);
+      cursor: pointer; font-family: inherit; transition: all 0.18s;
+      display: flex; align-items: center; gap: 6px; white-space: nowrap;
+    }
+    .filter-btn:hover { background: var(--surface); color: var(--text); }
+    .filter-btn.active { background: var(--surface); color: var(--text);
+      border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
+    .filter-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── SECTION ─────────────────────────────────────────────────── */
+    .section { padding: 64px 0 24px; }
+    .section-hdr { margin-bottom: 32px; }
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px;
+    }
+    .section-title { font-size: 1.6rem; font-weight: 700; }
+    .cat-bar {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 24px;
+      padding-bottom: 16px; border-bottom: 1px solid var(--border);
+    }
+    .cat-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .cat-name { font-size: 1.05rem; font-weight: 700; }
+    .cat-count { font-size: 12px; color: var(--text-tertiary); margin-left: auto;
+      font-weight: 500; }
+
+    /* ── SST GRID ────────────────────────────────────────────────── */
+    .sst-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
+      margin-bottom: 48px;
+    }
+
+    /* ── SST CARD ────────────────────────────────────────────────── */
+    .sst-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .sst-card:hover { box-shadow: var(--shadow-md); }
+    .sst-card-head {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 18px 18px 14px;
+    }
+    .sst-num {
+      flex-shrink: 0; width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; letter-spacing: -0.02em;
+    }
+    .sst-info { flex: 1; min-width: 0; }
+    .sst-name { font-size: 14px; font-weight: 700; line-height: 1.35; margin-bottom: 5px; }
+    .sst-brief { font-size: 12.5px; color: var(--text-secondary); line-height: 1.55; }
+    .sst-footer {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 10px 18px 14px; border-top: 1px solid var(--border);
+    }
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px; border-radius: 6px;
+      font-size: 11px; font-weight: 600;
+    }
+    .tag-pages { background: var(--surface-2); color: var(--text-secondary); }
+    .tag-tools { background: var(--v-amber-bg); color: var(--v-amber); }
+    html.theme-dark .tag-tools { color: #D4974A; }
+    .tag-auto { background: var(--v-pine-bg); color: var(--v-pine); }
+    html.theme-dark .tag-auto { color: #5EA88F; }
+    .tag-op { background: var(--v-plum-bg); color: var(--v-plum); }
+    html.theme-dark .tag-op { color: #C095BC; }
+    .sst-expand {
+      width: 24px; height: 24px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-tertiary); border-radius: 50%;
+      background: var(--surface-2);
+      transition: transform 0.25s, background 0.15s, color 0.15s;
+      margin-top: 2px;
+    }
+    .sst-card.open .sst-expand {
+      transform: rotate(180deg);
+      background: var(--v-plum-bg); color: var(--v-plum);
+    }
+    html.theme-dark .sst-card.open .sst-expand { color: #C095BC; }
+
+    /* ── DETAIL PANEL ─────────────────────────────────────────────── */
+    .sst-detail {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+      border-top: 0px solid var(--border);
+    }
+    .sst-card.open .sst-detail {
+      max-height: 600px;
+      border-top: 1px solid var(--border);
+    }
+    .sst-detail-in {
+      padding: 16px 18px 18px;
+      background: linear-gradient(to bottom, var(--surface-2), var(--surface));
+    }
+    .detail-section { margin-bottom: 14px; }
+    .detail-section:last-child { margin-bottom: 0; }
+    .detail-lbl {
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-tertiary); margin-bottom: 6px;
+    }
+    .detail-text { font-size: 13px; line-height: 1.65; color: var(--text-secondary); }
+    .pages-list { display: flex; flex-direction: column; gap: 4px; }
+    .page-row {
+      display: flex; gap: 8px; align-items: flex-start;
+      font-size: 12.5px; line-height: 1.5; color: var(--text-secondary);
+    }
+    .page-row::before {
+      content: ''; flex-shrink: 0; width: 5px; height: 5px;
+      border-radius: 50%; background: var(--border-strong); margin-top: 7px;
+    }
+    .tools-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tool-pill {
+      padding: 3px 10px; border-radius: 6px;
+      background: var(--surface); border: 1px solid var(--border-strong);
+      font-size: 11.5px; font-weight: 500; color: var(--text);
+    }
+
+    /* ── OVERVIEW CARDS ──────────────────────────────────────────── */
+    .overview-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+      margin-bottom: 64px;
+    }
+    .ov-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 24px; box-shadow: var(--shadow-sm);
+    }
+    .ov-icon {
+      width: 40px; height: 40px; border-radius: 10px; margin-bottom: 14px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ov-card h4 { margin-bottom: 8px; }
+    .ov-card p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ── ANIMATIONS ──────────────────────────────────────────────── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    .animate { animation: fadeInUp 0.55s ease-out both; }
+    .animate.delay-1 { animation-delay: 0.07s; }
+    .animate.delay-2 { animation-delay: 0.14s; }
+    .animate.delay-3 { animation-delay: 0.21s; }
+    .animate.delay-4 { animation-delay: 0.28s; }
+    .animate.delay-5 { animation-delay: 0.35s; }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+
+    /* ── MENU ────────────────────────────────────────────────────── */
+    .viz-menu { position: fixed; top: 16px; right: 16px; z-index: 9999; }
+    .viz-menu-toggle {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      box-shadow: var(--shadow-sm); transition: all 0.2s;
+    }
+    .viz-menu-toggle:hover { background: var(--surface-hover); }
+    .viz-menu-dropdown {
+      position: absolute; top: 48px; right: 0; min-width: 180px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 6px;
+      opacity: 0; visibility: hidden; transform: translateY(-6px);
+      transition: all 0.18s; box-shadow: var(--shadow-md);
+    }
+    .viz-menu-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .viz-menu-dropdown button {
+      width: 100%; padding: 9px 12px; border: none; border-radius: 7px;
+      background: transparent; color: var(--text); font-size: 13px;
+      font-family: inherit; cursor: pointer; text-align: left;
+      display: flex; align-items: center; gap: 8px; transition: background 0.12s;
+    }
+    .viz-menu-dropdown button:hover { background: var(--surface-hover); }
+
+    /* ── FOOTER ──────────────────────────────────────────────────── */
+    .footer {
+      text-align: center; padding: 40px 24px 64px;
+      font-size: 12px; color: var(--text-tertiary); border-top: 1px solid var(--border);
+    }
+
+    /* ── PRINT ───────────────────────────────────────────────────── */
+    @media print {
+      body { background: white !important; color: black !important; }
+      .viz-menu, .filter-bar { display: none !important; }
+      .sst-detail { max-height: none !important; }
+      .card { break-inside: avoid; }
+      * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      h1 { font-size: 2.4rem; }
+      .overview-grid { grid-template-columns: 1fr; }
+      .hero { padding: 64px 20px 48px; }
+      .hero-stats { flex-wrap: wrap; }
+      .sst-grid { grid-template-columns: 1fr; }
+      .stat-item { padding: 14px 20px; }
+    }
+    @media (max-width: 375px) {
+      body { overflow-x: hidden; }
+      h1 { font-size: 2rem; }
+      .container { padding: 0 16px; }
+    }
+
+    /* ── HIDDEN FILTER TARGET ─────────────────────────────────────── */
+    .sst-card[data-hidden] { display: none; }
+    .cat-section[data-hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <a href="#main-content" style="position:absolute;left:-9999px;top:auto;overflow:hidden;z-index:10000;">Skip to content</a>
+
+  <!-- MENU -->
+  <div class="viz-menu">
+    <button class="viz-menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+      </svg>
+    </button>
+    <div class="viz-menu-dropdown" id="vizMenuDropdown">
+      <button onclick="cycleTheme()"><span id="themeIcon">☀️</span><span id="themeLabel">Light</span></button>
+      <button onclick="downloadImage()"><span>📥</span><span>Download PNG</span></button>
+      <button onclick="window.print()"><span>🖨️</span><span>Print / PDF</span></button>
+    </div>
+  </div>
+
+  <main id="main-content" role="main">
+
+    <!-- ── HERO ─────────────────────────────────────────────────── -->
+    <section class="hero">
+      <div class="hero-eyebrow animate">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
+        PrisMax SW 3.5 · Service Manual §4.6
+      </div>
+      <h1 class="animate delay-1">System<br>Self-Tests</h1>
+      <p class="hero-sub animate delay-2">Operator-initiated built-in tests that verify and troubleshoot major subsystems and components of the PrisMax device.</p>
+      <div class="hero-stats animate delay-3">
+        <div class="stat-item">
+          <div class="stat-num" data-count="24">24</div>
+          <div class="stat-lbl">Total SSTs</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" data-count="6">6</div>
+          <div class="stat-lbl">Categories</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" data-count="100">100+</div>
+          <div class="stat-lbl">Test Pages</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" data-count="15">15+</div>
+          <div class="stat-lbl">Required Tools</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FILTER BAR ────────────────────────────────────────────── -->
+    <div class="filter-bar" role="navigation" aria-label="Category filter">
+      <div class="filter-inner" id="filterBar">
+        <button class="filter-btn active" data-cat="all" onclick="filterCat('all', this)">
+          All Tests
+        </button>
+        <button class="filter-btn" data-cat="display" onclick="filterCat('display', this)">
+          <span class="filter-dot" style="background:#4472C0"></span>Display &amp; UI
+        </button>
+        <button class="filter-btn" data-cat="fluid" onclick="filterCat('fluid', this)">
+          <span class="filter-dot" style="background:#3E7A67"></span>Fluid &amp; Air
+        </button>
+        <button class="filter-btn" data-cat="mechanical" onclick="filterCat('mechanical', this)">
+          <span class="filter-dot" style="background:#C47B2E"></span>Mechanical
+        </button>
+        <button class="filter-btn" data-cat="boards" onclick="filterCat('boards', this)">
+          <span class="filter-dot" style="background:#8B5287"></span>Circuit Boards
+        </button>
+        <button class="filter-btn" data-cat="sensors" onclick="filterCat('sensors', this)">
+          <span class="filter-dot" style="background:#B04545"></span>Sensors
+        </button>
+        <button class="filter-btn" data-cat="special" onclick="filterCat('special', this)">
+          <span class="filter-dot" style="background:#5A6E8A"></span>Special
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- ── OVERVIEW ──────────────────────────────────────────── -->
+      <section class="section" id="sec-overview">
+        <div class="section-hdr">
+          <div class="section-label">How It Works</div>
+          <h2 class="section-title">Before You Begin</h2>
+        </div>
+        <div class="overview-grid">
+          <div class="ov-card animate delay-1" data-reveal>
+            <div class="ov-icon" style="background:rgba(139,82,135,0.1)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B5287" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <h4>Date &amp; Time Check</h4>
+            <p>Before performing any SST, ensure that the date and time are correct on the device. SST results include timestamps for traceability.</p>
+          </div>
+          <div class="ov-card animate delay-2" data-reveal>
+            <div class="ov-icon" style="background:rgba(62,122,103,0.1)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3E7A67" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <h4>How to Access</h4>
+            <p>Press the <strong>SST menu item</strong> to display the SST Status screen. Select SST again to show the component test menu, then select the individual SST.</p>
+          </div>
+          <div class="ov-card animate delay-3" data-reveal>
+            <div class="ov-icon" style="background:rgba(196,123,46,0.1)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C47B2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <h4>Results &amp; Logs</h4>
+            <p>The <strong>Report</strong> button captures a snapshot of all SST statuses. Results are retrievable via Service Logs in USB Import/Export tab in SysConfig.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── CAT: DISPLAY & UI ─────────────────────────────────── -->
+      <section class="cat-section" id="cat-display" data-cat="display">
+        <div class="cat-bar">
+          <span class="cat-dot" style="background:#4472C0"></span>
+          <span class="cat-name">Display &amp; UI</span>
+          <span class="cat-count">1 test</span>
+        </div>
+        <div class="sst-grid">
+
+          <div class="sst-card" data-cat="display" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(68,114,192,0.1);color:#4472C0;">4.6.2</div>
+              <div class="sst-info">
+                <div class="sst-name">Display SST</div>
+                <div class="sst-brief">Verifies display and touchscreen meet specs: contrast, color resolution, pixel integrity, backlight gradient, status light color/intensity, and DCP function.</div>
+              </div>
+              <div class="sst-expand">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">11 pages</span>
+              <span class="tag tag-op">Operator-executed</span>
+              <span class="tag" style="background:var(--v-blue-bg);color:#4472C0;">No tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Page Structure</div>
+                  <div class="pages-list">
+                    <div class="page-row">Page 1 — List of display module tests</div>
+                    <div class="page-row">Pages 2–10 — Instruction pages, performance (test) screens, and results entry. Tests color presentation and touchscreen response.</div>
+                    <div class="page-row">Page 11 — Summary of results for all display tests</div>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Key Notes</div>
+                  <div class="detail-text">Page 4 (RGB Results): System temporarily disables backlight (~3 sec). Page 10 (Display Controller): Press Start; system auto-executes all tests with no operator action.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── CAT: FLUID & AIR ──────────────────────────────────── -->
+      <section class="cat-section" id="cat-fluid" data-cat="fluid">
+        <div class="cat-bar">
+          <span class="cat-dot" style="background:#3E7A67"></span>
+          <span class="cat-name">Fluid &amp; Air Systems</span>
+          <span class="cat-count">5 tests</span>
+        </div>
+        <div class="sst-grid">
+
+          <div class="sst-card" data-cat="fluid" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(62,122,103,0.1);color:#3E7A67;">4.6.3</div>
+              <div class="sst-info">
+                <div class="sst-name">ARPS SST</div>
+                <div class="sst-brief">Verifies ARPS system meets specifications: pump, valves, pressure sensor assemblies, and tubing connections with no significant air leaks.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">6 pages</span>
+              <span class="tag tag-op">Operator interaction (pages 1–4)</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">SE6012 Pressure pod plug ×3</span>
+                    <span class="tool-pill">SE6020 Return port plug</span>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Page Structure</div>
+                  <div class="pages-list">
+                    <div class="page-row">Pages 1–2 — Apply specific pressures (0 &amp; 450 mmHg) to internal ARPS</div>
+                    <div class="page-row">Pages 3–4 — Extend testing to include internal and external components</div>
+                    <div class="page-row">Page 5 — Sensor location tests; helps locate leaks if found</div>
+                    <div class="page-row">Page 6 — Summary of ARPS test results</div>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Test Specs</div>
+                  <div class="detail-text">Internal leakage ≤ 40 mmHg in 60 sec. External (valve to pods): leakage ≤ 10 mmHg in 300 sec. Location test: each sensor retains ~30 mmHg of pressure.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="fluid" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(62,122,103,0.1);color:#3E7A67;">4.6.16</div>
+              <div class="sst-info">
+                <div class="sst-name">Liquid Level Sensor SST</div>
+                <div class="sst-brief">Verifies LLS correctly detects liquid level at upper and lower ranges, and detects chamber presence including foam detection.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">2 pages</span>
+              <span class="tag tag-op">Operator-controlled</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">SE6019 Syringe, tubing &amp; chamber assembly</span>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Tests Performed</div>
+                  <div class="detail-text">Chamber presence detection (absent → present). Liquid level verification: empty chamber → below upper sensor → above upper sensor. Foam detector blocked signal test at assembly top.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="fluid" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(62,122,103,0.1);color:#3E7A67;">4.6.17</div>
+              <div class="sst-info">
+                <div class="sst-name">Air Bubble Detector SST</div>
+                <div class="sst-brief">Verifies ABD can detect 20 μL bubbles and tubing presence.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">2 pages</span>
+              <span class="tag tag-op">Operator-controlled</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">SE6019 Syringe, tubing &amp; chamber assembly</span>
+                    <span class="tool-pill">SE6023 25 μL syringe</span>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Tests Performed</div>
+                  <div class="detail-text">Tube presence detection (absent → present). Fluid presence confirmation. Bubble test: operator injects 20 μL bubble; system monitors ABD signal to confirm detection.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="fluid" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(62,122,103,0.1);color:#3E7A67;">4.6.18</div>
+              <div class="sst-info">
+                <div class="sst-name">Return Clamp SST</div>
+                <div class="sst-brief">Verifies return clamp meets specs: tube presence detection, max current draw, holding current, and clamp open/close time.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">2 pages</span>
+              <span class="tag tag-op">Mixed (operator + auto)</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">SE6019 Syringe, tubing &amp; chamber assembly</span>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Key Specs</div>
+                  <div class="detail-text">Open/close time &lt; 0.5 sec. Holding current: 0.2–1.0 A (open, 30 sec). De-energized current: 0.05–0.05 A (closed, 10 sec). Max instantaneous current &lt; 3.25 A during activation.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="fluid" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(62,122,103,0.1);color:#3E7A67;">4.6.19</div>
+              <div class="sst-info">
+                <div class="sst-name">Liquid Leak Detector SST</div>
+                <div class="sst-brief">Verifies LLD can detect fluid presence beneath the device.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">2 pages</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">SE6032 Syringe, 50 cc</span>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Page Structure</div>
+                  <div class="pages-list">
+                    <div class="page-row">Page 1 — Leak detection sensor tests</div>
+                    <div class="page-row">Page 2 — Summary of results for all leak detection tests</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── CAT: MECHANICAL ───────────────────────────────────── -->
+      <section class="cat-section" id="cat-mechanical" data-cat="mechanical">
+        <div class="cat-bar">
+          <span class="cat-dot" style="background:#C47B2E"></span>
+          <span class="cat-name">Mechanical</span>
+          <span class="cat-count">6 tests</span>
+        </div>
+        <div class="sst-grid">
+
+          <div class="sst-card" data-cat="mechanical" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(196,123,46,0.1);color:#C47B2E;">4.6.6</div>
+              <div class="sst-info">
+                <div class="sst-name">Pinch Valves SST</div>
+                <div class="sst-brief">Verifies valve movement timing and motor current for Center, Clockwise, and Counterclockwise positions, plus operator identification.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">3 pages</span>
+              <span class="tag tag-op">Mixed (operator + auto)</span>
+              <span class="tag" style="background:var(--surface-2);color:var(--text-secondary);">No tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Key Specs</div>
+                  <div class="detail-text">Move time to each location &lt; 1.000 sec. Motor current per location change &lt; 0.5 A.</div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Page Structure</div>
+                  <div class="pages-list">
+                    <div class="page-row">Page 1 — Pinch valve motor tests</div>
+                    <div class="page-row">Page 2 — Location tests: system moves each PV and waits for operator response</div>
+                    <div class="page-row">Page 3 — Summary of PV SST results</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="mechanical" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(196,123,46,0.1);color:#C47B2E;">4.6.7</div>
+              <div class="sst-info">
+                <div class="sst-name">Pressure Sensors SST</div>
+                <div class="sst-brief">Verifies pressure sensor and solenoid assemblies meet specs for accuracy over a range of pressures and correct pod locations.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">8 pages</span>
+              <span class="tag tag-op">Operator-controlled</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">Pressure meter</span>
+                    <span class="tool-pill">SE6012 Pressure pod plug ×2</span>
+                    <span class="tool-pill">SE6011 Pod plug, syringe &amp; clamp</span>
+                    <span class="tool-pill">SE6029 Return port with tubing</span>
+                    <span class="tool-pill">SE6034 Digital manometer</span>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Key Specs</div>
+                  <div class="detail-text">Zero offset: 0 ±10 mmHg. Pressurized reading: within ±5 mmHg of applied pressure. Barometric test: within ±10 mmHg, 0–60°C.</div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Page Structure</div>
+                  <div class="pages-list">
+                    <div class="page-row">Pages 1–5 — Apply pressures (0, ±200, ±400 mmHg) to sensors</div>
+                    <div class="page-row">Page 6 — Barometer test (use digital manometer)</div>
+                    <div class="page-row">Page 7 — Sensor location tests (pressure pod plugs required)</div>
+                    <div class="page-row">Page 8 — Summary of all pressure test results</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="mechanical" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(196,123,46,0.1);color:#C47B2E;">4.6.8</div>
+              <div class="sst-info">
+                <div class="sst-name">Scales SST</div>
+                <div class="sst-brief">Verifies scales meet specs for accuracy, hysteresis, correct LED function, and correct scale location using calibration weights.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">7 pages</span>
+              <span class="tag tag-op">Operator interaction</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">G5000103 Calibration weight set (A,B,C,D — 7000 g total)</span>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Key Specs</div>
+                  <div class="detail-text">C+D: 0 ±7 g &amp; 1800 ±7 g. A+B: 0 ±7 g &amp; 5200 ±7 g; hysteresis &lt; ±2 g. A+B+C+D: 0 ±7 g &amp; 7000 ±7 g. Std deviation &lt; 0.3 g. Channel difference &lt; 6 g.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="mechanical" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(196,123,46,0.1);color:#C47B2E;">4.6.9</div>
+              <div class="sst-info">
+                <div class="sst-name">Loaders SST</div>
+                <div class="sst-brief">Verifies loaders move through full stroke at required velocity and all loader motors are correctly located.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">3 pages</span>
+              <span class="tag tag-op">Operator location test</span>
+              <span class="tag" style="background:var(--surface-2);color:var(--text-secondary);">No tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Key Specs</div>
+                  <div class="detail-text">Full extend time &lt; 4.000 sec. Full retract time &lt; 4.000 sec.</div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Page Structure</div>
+                  <div class="pages-list">
+                    <div class="page-row">Page 1 — Loader movement tests (extend/retract)</div>
+                    <div class="page-row">Page 2 — Loader motor location test (operator identifies correct loader)</div>
+                    <div class="page-row">Page 3 — Summary of all loader test results</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="mechanical" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(196,123,46,0.1);color:#C47B2E;">4.6.10</div>
+              <div class="sst-info">
+                <div class="sst-name">Motors SST</div>
+                <div class="sst-brief">Verifies each motor meets specs: speed accuracy, odometer/encoder accuracy, start/stop response, motor currents, and correct location.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">3 pages</span>
+              <span class="tag tag-op">Mixed (auto + location)</span>
+              <span class="tag" style="background:var(--surface-2);color:var(--text-secondary);">No tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Motors Covered</div>
+                  <div class="detail-text">Blood pump, solution pumps (PBP, replacement, dialysate, effluent, AE).</div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Key Specs</div>
+                  <div class="detail-text">Speed settle time &lt; 5 sec. Settled speed within 2% of commanded. Std dev &lt; 3 RPM. Speed within ±8 RPM at all times. Max current &lt; 3.5 A. Stop time &lt; 5 sec from 150 RPM.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="mechanical" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(196,123,46,0.1);color:#C47B2E;">4.6.24</div>
+              <div class="sst-info">
+                <div class="sst-name">Syringe Pump SST</div>
+                <div class="sst-brief">Verifies syringe pump meets specs for travel distance, weight measurement, and solution delivery.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">3 pages</span>
+              <span class="tag tag-op">Manual weight placement</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">G5000103 Calibration weight set (A,B,C,D — 7000 g)</span>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Key Specs</div>
+                  <div class="detail-text">Weight: 0 &amp; 7000 g ±400 g; std dev ±25 g. Position: 77 mm to 100 mm = 23.1 mm; 77 mm signal width = 4 ±0.4 mm. Speed: 6 ±0.3 mm/s. Friction: ±2 N absolute, ±1 N relative.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── CAT: CIRCUIT BOARDS ────────────────────────────────── -->
+      <section class="cat-section" id="cat-boards" data-cat="boards">
+        <div class="cat-bar">
+          <span class="cat-dot" style="background:#8B5287"></span>
+          <span class="cat-name">Circuit Boards</span>
+          <span class="cat-count">5 tests</span>
+        </div>
+        <div class="sst-grid">
+
+          <div class="sst-card" data-cat="boards" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(139,82,135,0.1);color:#8B5287;">4.6.11</div>
+              <div class="sst-info">
+                <div class="sst-name">Power Board SST</div>
+                <div class="sst-brief">Verifies power board specs: power supplies, PSC processor comms, actuators, thermal sensor, battery, power control panel, speaker, and display.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">10 pages</span>
+              <span class="tag tag-op">Multiple operator steps</span>
+              <span class="tag tag-tools">Stopwatch required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Page Structure</div>
+                  <div class="pages-list">
+                    <div class="page-row">Page 1 — Power supply tests</div>
+                    <div class="page-row">Page 2 — PSC comms, thermal sensor, and fan tests</div>
+                    <div class="page-row">Page 3 — FPGA control function tests</div>
+                    <div class="page-row">Page 4 — Actuator control &amp; power disable tests (system may reboot)</div>
+                    <div class="page-row">Page 5 — Power control panel tests</div>
+                    <div class="page-row">Page 6 — Backup speaker test</div>
+                    <div class="page-row">Page 7 — Power cycling &amp; alert indicator tests (requires reboot)</div>
+                    <div class="page-row">Page 8 — Battery backup tests (disconnect/reconnect power cord)</div>
+                    <div class="page-row">Page 9 — Backup speaker capacitor, duration, and RTC battery</div>
+                    <div class="page-row">Page 10 — Summary of all power board test results</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="boards" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(139,82,135,0.1);color:#8B5287;">4.6.12</div>
+              <div class="sst-info">
+                <div class="sst-name">Main Board SST</div>
+                <div class="sst-brief">Verifies main board meets specs for functional communication between main, power, and safety board processors. Fully automated.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">2 pages</span>
+              <span class="tag tag-auto">Fully automated</span>
+              <span class="tag" style="background:var(--surface-2);color:var(--text-secondary);">No tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Page Structure</div>
+                  <div class="pages-list">
+                    <div class="page-row">Page 1 — FPGA and processor communications tests</div>
+                    <div class="page-row">Page 2 — Summary of all main board test results</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="boards" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(139,82,135,0.1);color:#8B5287;">4.6.13</div>
+              <div class="sst-info">
+                <div class="sst-name">Safety Board SST</div>
+                <div class="sst-brief">Verifies safety board meets specs for communication between safety/main/power board processors and safety-related components.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">5 pages</span>
+              <span class="tag tag-auto">Mostly automated</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">SE6019 Syringe, tubing &amp; chamber assembly</span>
+                    <span class="tool-pill">SE6051 Water-filled tube</span>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Page Structure</div>
+                  <div class="pages-list">
+                    <div class="page-row">Page 1 — Safety board comms test with syringe, scales, and CP</div>
+                    <div class="page-row">Page 2 — Communication redundancy tests to CP, ABD, syringe, BLD</div>
+                    <div class="page-row">Page 3 — Pressure sensor analog circuitry test</div>
+                    <div class="page-row">Page 4 — BLD, LLD, ABD, and LLS circuit tests</div>
+                    <div class="page-row">Page 5 — Summary of all safety board test results</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="boards" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(139,82,135,0.1);color:#8B5287;">4.6.14</div>
+              <div class="sst-info">
+                <div class="sst-name">Driver Board SST</div>
+                <div class="sst-brief">Verifies driver board communication between CP and CP delegate FPGA, and that actuator power can be disabled. Fully automated.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">3 pages</span>
+              <span class="tag tag-auto">Fully automated</span>
+              <span class="tag" style="background:var(--surface-2);color:var(--text-secondary);">No tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Page Structure</div>
+                  <div class="pages-list">
+                    <div class="page-row">Page 1 — Tests the CP FPGA and other signals</div>
+                    <div class="page-row">Page 2 — Tests the actuator power control</div>
+                    <div class="page-row">Page 3 — Summary of all driver board test results</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="boards" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(139,82,135,0.1);color:#8B5287;">4.6.15</div>
+              <div class="sst-info">
+                <div class="sst-name">Isolation Board SST</div>
+                <div class="sst-brief">Verifies I/O port function: serial null-modem connection (3× DB9), USB port presence/absence, and remote alarm connector continuity.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">3 pages</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">SE6024 USB flash drive</span>
+                    <span class="tool-pill">SE6025 Null-modem cable (DB9M → DB9M)</span>
+                    <span class="tool-pill">SE6046 Serial loopback plug</span>
+                    <span class="tool-pill">Digital multimeter (DMM)</span>
+                    <span class="tool-pill">SE6027 DMM probes, fine tip</span>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Remote Alarm Connector</div>
+                  <div class="detail-text">Pins 1, 3, and 4: fused non-powered passive outputs connected to SPDT relay. Continuity tested between specified pins.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── CAT: SENSORS ──────────────────────────────────────── -->
+      <section class="cat-section" id="cat-sensors" data-cat="sensors">
+        <div class="cat-bar">
+          <span class="cat-dot" style="background:#B04545"></span>
+          <span class="cat-name">Sensors &amp; I/O</span>
+          <span class="cat-count">3 tests</span>
+        </div>
+        <div class="sst-grid">
+
+          <div class="sst-card" data-cat="sensors" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(176,69,69,0.09);color:#B04545;">4.6.4</div>
+              <div class="sst-info">
+                <div class="sst-name">Barcode Reader SST</div>
+                <div class="sst-brief">Verifies hand-held barcode reader performance for 2D and 1D barcodes: GS1, PDF417, QR code, and DataMatrix.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">2 pages</span>
+              <span class="tag tag-op">Operator-executed</span>
+              <span class="tag" style="background:var(--surface-2);color:var(--text-secondary);">No tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Tips</div>
+                  <div class="detail-text">Hold reader at a slight angle about 1 foot (30 cm) away from screen for best results. System increments count, displays checkmark, and shows scanned text (example values, no product info).</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="sensors" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(176,69,69,0.09);color:#B04545;">4.6.5</div>
+              <div class="sst-info">
+                <div class="sst-name">Audio SST</div>
+                <div class="sst-brief">Verifies main speaker and microphone meet specifications at low, medium, and high volumes.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">2 pages</span>
+              <span class="tag tag-auto">System-controlled</span>
+              <span class="tag" style="background:var(--surface-2);color:var(--text-secondary);">No tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">How It Works</div>
+                  <div class="detail-text">System generates 3 identical sound patterns at 3 different volumes. Detected sound is analyzed against generated sound; identical = pass.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="sensors" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(176,69,69,0.09);color:#B04545;">4.6.20</div>
+              <div class="sst-info">
+                <div class="sst-name">Ambient Temperature Sensor SST</div>
+                <div class="sst-brief">Verifies ATS provides accurate temperature measurements from the temperature probe below the drip tray.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">2 pages</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">SE6043 Temperature Monitor</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── CAT: SPECIAL ──────────────────────────────────────── -->
+      <section class="cat-section" id="cat-special" data-cat="special">
+        <div class="cat-bar">
+          <span class="cat-dot" style="background:#5A6E8A"></span>
+          <span class="cat-name">Special &amp; Memory</span>
+          <span class="cat-count">3 tests</span>
+        </div>
+        <div class="sst-grid">
+
+          <div class="sst-card" data-cat="special" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(90,110,138,0.1);color:#5A6E8A;">4.6.21</div>
+              <div class="sst-info">
+                <div class="sst-name">Discharger SST</div>
+                <div class="sst-brief">Verifies discharger meets specs: line presence detection, correct relay circuit function, and correct resistance values.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">2 pages</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">Digital multimeter (DMM)</span>
+                    <span class="tool-pill">SE6022 Discharge lug with tubing section</span>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Key Specs</div>
+                  <div class="detail-text">Relay open: reading between discharge clip and chassis ground &gt; 9 MΩ. Relay closed: reading = 3.24 ±0.15 MΩ.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="special" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(90,110,138,0.1);color:#5A6E8A;">4.6.22</div>
+              <div class="sst-info">
+                <div class="sst-name">RAM SST</div>
+                <div class="sst-brief">Verifies main board RAM meets specs: data patterns can be written correctly over entire SRAM and DRAM memory spaces.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">2 pages</span>
+              <span class="tag tag-auto">System-controlled</span>
+              <span class="tag" style="background:var(--surface-2);color:var(--text-secondary);">No tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">How It Works</div>
+                  <div class="detail-text">SRAM used for startup; DRAM for normal operation. SST runs from one bank while testing the other. DRAM test requires running from SRAM (as part of boot code). Machine reboots and displays splash screen during RAM test.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sst-card" data-cat="special" data-reveal onclick="toggleCard(this)">
+            <div class="sst-card-head">
+              <div class="sst-num" style="background:rgba(90,110,138,0.1);color:#5A6E8A;">4.6.23</div>
+              <div class="sst-info">
+                <div class="sst-name">TherMax SST</div>
+                <div class="sst-brief">Verifies TherMax blood warmer device is functioning and can communicate with PrisMax. Covers thermistors, locking, LEDs, and heating plates.</div>
+              </div>
+              <div class="sst-expand"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="sst-footer">
+              <span class="tag tag-pages">4 pages</span>
+              <span class="tag tag-op">Mixed (mostly operator)</span>
+              <span class="tag tag-tools">Tools required</span>
+            </div>
+            <div class="sst-detail">
+              <div class="sst-detail-in">
+                <div class="detail-section">
+                  <div class="detail-lbl">Required Tools</div>
+                  <div class="tools-list">
+                    <span class="tool-pill">SE7000 Bag Detect and Rear BLD Fixture</span>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Page Structure</div>
+                  <div class="pages-list">
+                    <div class="page-row">Page 1 — TherMax temperature and LED system tests</div>
+                    <div class="page-row">Page 2 — Display panel, power and safety tests</div>
+                    <div class="page-row">Page 3 — Locking mechanism and sensor tests (Optional)</div>
+                    <div class="page-row">Page 4 — Summary of all TherMax test results</div>
+                  </div>
+                </div>
+                <div class="detail-section">
+                  <div class="detail-lbl">Important Notes</div>
+                  <div class="detail-text">Heater plates need time to cool before re-running page 2 tests. Cycle TherMax power when done — it will not communicate after safety system over-temperature SST until power-cycled. Timeout = 70 sec.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div><!-- /container -->
+
+    <!-- ── FOOTER ────────────────────────────────────────────────── -->
+    <footer class="footer">
+      PrisMax SW 3.5 · Service Manual §4.6 · AW8345 Rev B JAN 2025 · Program Version 3.5
+    </footer>
+
+  </main><!-- /main -->
+
+  <script>
+    // === MENU ===
+    function toggleMenu() {
+      var d = document.getElementById('vizMenuDropdown');
+      if (d) d.classList.toggle('open');
+    }
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.viz-menu')) {
+        var d = document.getElementById('vizMenuDropdown');
+        if (d) d.classList.remove('open');
+      }
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        var d = document.getElementById('vizMenuDropdown');
+        if (d) d.classList.remove('open');
+      }
+    });
+
+    // === THEME ===
+    var savedTheme = localStorage.getItem('viz-theme');
+    var currentTheme = savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    function applyTheme(t) {
+      document.documentElement.className = 'theme-' + t;
+      var icon = document.getElementById('themeIcon');
+      var lbl  = document.getElementById('themeLabel');
+      if (icon) icon.textContent = t === 'dark' ? '🌙' : '☀️';
+      if (lbl)  lbl.textContent  = t === 'dark' ? 'Dark' : 'Light';
+      localStorage.setItem('viz-theme', t);
+      currentTheme = t;
+    }
+    function cycleTheme() { applyTheme(currentTheme === 'dark' ? 'light' : 'dark'); }
+    applyTheme(currentTheme);
+
+    // === SCROLL REVEAL ===
+    document.querySelectorAll('[data-reveal]').forEach(function(el) {
+      el.classList.add('reveal');
+    });
+    var revealObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(function(el) { revealObs.observe(el); });
+
+    // === CARD TOGGLE ===
+    function toggleCard(card) {
+      // Don't toggle if clicking expand icon area just collapsed, handle naturally
+      card.classList.toggle('open');
+    }
+
+    // === FILTER ===
+    function filterCat(cat, btn) {
+      // Update button states
+      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+
+      // Show/hide category sections
+      document.querySelectorAll('.cat-section').forEach(function(sec) {
+        if (cat === 'all' || sec.getAttribute('data-cat') === cat) {
+          sec.removeAttribute('data-hidden');
+        } else {
+          sec.setAttribute('data-hidden', '1');
+        }
+      });
+
+      // Show/hide overview
+      var ov = document.getElementById('sec-overview');
+      if (ov) ov.style.display = (cat === 'all') ? '' : 'none';
+    }
+
+    // === NUMBER COUNTERS ===
+    function animateCounters() {
+      document.querySelectorAll('[data-count]').forEach(function(el) {
+        if (el.dataset.counted) return;
+        el.dataset.counted = '1';
+        var target = parseFloat(el.dataset.count);
+        var suffix = el.dataset.suffix || '';
+        var start = performance.now(), dur = 1000;
+        (function tick(now) {
+          var p = Math.min((now - start) / dur, 1), eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(target * eased) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        })(start);
+      });
+    }
+    var cEl = document.querySelector('[data-count]');
+    if (cEl) {
+      var cObs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) { if (e.isIntersecting) { animateCounters(); cObs.disconnect(); } });
+      }, { threshold: 0.3 });
+      cObs.observe(cEl);
+    }
+
+    // === DOWNLOAD PNG ===
+    async function downloadImage() {
+      var menu = document.querySelector('.viz-menu');
+      if (menu) menu.style.display = 'none';
+      try {
+        var url = await htmlToImage.toPng(document.body, { quality: 1, pixelRatio: 2 });
+        var a = document.createElement('a');
+        a.href = url; a.download = 'prismax-sst-guide.png'; a.click();
+      } catch(e) { console.error('Download failed:', e); }
+      if (menu) menu.style.display = '';
+    }
+
+    function onThemeChange() {}
+  </script>
+</body>
+</html>
