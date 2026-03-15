@@ -13,25 +13,25 @@
 
     /* ── VANTIVE 팔레트 (30% 톤다운) ─────────────────────── */
     :root {
-      --v-plum:       #7E3578;
-      --v-plum-d:     #6E3C6B;
-      --v-plum-bg:    rgba(126,53,120,0.08);
-      --v-pine:       #266B52;
-      --v-pine-bg:    rgba(38,107,82,0.09);
-      --v-amber:      #C4700F;
-      --v-amber-bg:   rgba(196,112,15,0.09);
-      --v-danger:     #A83030;
-      --v-danger-bg:  rgba(168,48,48,0.08);
-      --v-blue:       #2B62BE;
-      --v-blue-bg:    rgba(43,98,190,0.08);
+      --v-plum:       #72256B;
+      --v-plum-d:     #5C1A65;
+      --v-plum-bg:    rgba(114,37,107,0.08);
+      --v-pine:       #105742;
+      --v-pine-bg:    rgba(16,87,66,0.09);
+      --v-amber:      #D4700A;
+      --v-amber-bg:   rgba(212,112,10,0.09);
+      --v-danger:     #C22020;
+      --v-danger-bg:  rgba(194,32,32,0.08);
+      --v-blue:       #1E4EA8;
+      --v-blue-bg:    rgba(30,78,168,0.08);
     }
 
     /* ── 테마 (클래스 기반) ─────────────────────────────── */
     html.theme-light {
-      --bg: #F7F6F2;
+      --bg: #FFFAEB;
       --surface: #FFFFFF;
-      --surface-hover: #F9F8F5;
-      --surface-2: #F2F1EC;
+      --surface-hover: #FFF5D6;
+      --surface-2: #FFF0C8;
       --border: rgba(0,0,0,0.07);
       --border-strong: rgba(0,0,0,0.12);
       --text: #1A1A1A;
@@ -91,17 +91,17 @@
     .hero::before {
       content: '';
       position: absolute; inset: 0;
-      background: radial-gradient(ellipse 70% 50% at 50% -10%, rgba(139,82,135,0.12) 0%, transparent 70%);
+      background: radial-gradient(ellipse 70% 50% at 50% -10%, rgba(114,37,107,0.12) 0%, transparent 70%);
       pointer-events: none;
     }
     .hero-eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
-      background: var(--v-plum-bg); border: 1px solid rgba(139,82,135,0.2);
+      background: var(--v-plum-bg); border: 1px solid rgba(114,37,107,0.2);
       color: var(--v-plum); border-radius: 20px;
       padding: 5px 14px; font-size: 12px; font-weight: 600;
       letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 24px;
     }
-    html.theme-dark .hero-eyebrow { color: #C095BC; background: rgba(139,82,135,0.15); border-color: rgba(139,82,135,0.3); }
+    html.theme-dark .hero-eyebrow { color: #C095BC; background: rgba(114,37,107,0.15); border-color: rgba(114,37,107,0.3); }
     .hero h1 { margin-bottom: 20px; max-width: 700px; margin-left: auto; margin-right: auto; }
     .hero-sub {
       font-size: 1.05rem; color: var(--text-secondary); max-width: 540px;
@@ -124,7 +124,7 @@
     /* ── 스티키 필터 바 ──────────────────────────────────── */
     .filter-bar {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(247,246,242,0.88); backdrop-filter: blur(16px);
+      background: rgba(255,250,235,0.88); backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border); transition: background 0.3s;
     }
     html.theme-dark .filter-bar { background: rgba(17,17,16,0.88); }
@@ -452,19 +452,19 @@
       <div class="filter-inner" id="filterBar">
         <button class="filter-btn active" data-cat="all" onclick="filterCat('all', this)">전체 항목</button>
         <button class="filter-btn" data-cat="display" onclick="filterCat('display', this)">
-          <span class="filter-btn-row"><span class="filter-dot" style="background:#2B62BE"></span>디스플레이 &amp; UI</span><span class="filter-en">Display &amp; UI</span>
+          <span class="filter-btn-row"><span class="filter-dot" style="background:#1E4EA8"></span>디스플레이 &amp; UI</span><span class="filter-en">Display &amp; UI</span>
         </button>
         <button class="filter-btn" data-cat="fluid" onclick="filterCat('fluid', this)">
-          <span class="filter-btn-row"><span class="filter-dot" style="background:#266B52"></span>유체 &amp; 공기</span><span class="filter-en">Fluid &amp; Air</span>
+          <span class="filter-btn-row"><span class="filter-dot" style="background:#105742"></span>유체 &amp; 공기</span><span class="filter-en">Fluid &amp; Air</span>
         </button>
         <button class="filter-btn" data-cat="mechanical" onclick="filterCat('mechanical', this)">
-          <span class="filter-btn-row"><span class="filter-dot" style="background:#C4700F"></span>기계부</span><span class="filter-en">Mechanical</span>
+          <span class="filter-btn-row"><span class="filter-dot" style="background:#D4700A"></span>기계부</span><span class="filter-en">Mechanical</span>
         </button>
         <button class="filter-btn" data-cat="boards" onclick="filterCat('boards', this)">
-          <span class="filter-btn-row"><span class="filter-dot" style="background:#7E3578"></span>회로 기판</span><span class="filter-en">Circuit Boards</span>
+          <span class="filter-btn-row"><span class="filter-dot" style="background:#72256B"></span>회로 기판</span><span class="filter-en">Circuit Boards</span>
         </button>
         <button class="filter-btn" data-cat="sensors" onclick="filterCat('sensors', this)">
-          <span class="filter-btn-row"><span class="filter-dot" style="background:#A83030"></span>센서 &amp; 입출력</span><span class="filter-en">Sensors &amp; I/O</span>
+          <span class="filter-btn-row"><span class="filter-dot" style="background:#C22020"></span>센서 &amp; 입출력</span><span class="filter-en">Sensors &amp; I/O</span>
         </button>
         <button class="filter-btn" data-cat="special" onclick="filterCat('special', this)">
           <span class="filter-btn-row"><span class="filter-dot" style="background:#5A6E8A"></span>특수 &amp; 메모리</span><span class="filter-en">Special &amp; Memory</span>
@@ -482,22 +482,22 @@
         </div>
         <div class="overview-grid">
           <div class="ov-card animate delay-1" data-reveal>
-            <div class="ov-icon" style="background:rgba(139,82,135,0.1)">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7E3578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <div class="ov-icon" style="background:rgba(114,37,107,0.1)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#72256B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             </div>
             <h4>날짜 &amp; 시간 확인</h4>
             <p>SST 수행 전 기기의 날짜와 시간이 정확히 설정되어 있는지 반드시 확인하세요. 테스트 결과에 타임스탬프가 기록됩니다.</p>
           </div>
           <div class="ov-card animate delay-2" data-reveal>
-            <div class="ov-icon" style="background:rgba(62,122,103,0.1)">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#266B52" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <div class="ov-icon" style="background:rgba(16,87,66,0.1)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#105742" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             </div>
             <h4>SST 진입 방법</h4>
             <p><strong>SST 메뉴 항목</strong>을 눌러 SST 상태 화면을 표시합니다. SST를 다시 선택하면 구성요소 테스트 메뉴가 나타나며, 원하는 개별 SST를 선택합니다.</p>
           </div>
           <div class="ov-card animate delay-3" data-reveal>
-            <div class="ov-icon" style="background:rgba(196,123,46,0.1)">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C4700F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <div class="ov-icon" style="background:rgba(212,112,10,0.1)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4700A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
             </div>
             <h4>결과 &amp; 로그 확인</h4>
             <p><strong>리포트</strong> 버튼을 누르면 전체 SST 상태의 스냅샷이 저장됩니다. SysConfig의 USB 가져오기/내보내기 탭 → 서비스 로그에서 결과를 조회할 수 있습니다.</p>
@@ -508,7 +508,7 @@
       <!-- ── 카테고리: 디스플레이 & UI ─────────────────── -->
       <section class="cat-section" id="cat-display" data-cat="display">
         <div class="cat-bar">
-          <span class="cat-dot" style="background:#2B62BE"></span>
+          <span class="cat-dot" style="background:#1E4EA8"></span>
           <span class="cat-name">디스플레이 &amp; UI<span class="cat-name-en">Display &amp; UI</span></span>
           <span class="cat-count">1개 항목</span>
         </div>
@@ -516,7 +516,7 @@
 
           <div class="sst-card" data-cat="display" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(68,114,192,0.1);color:#2B62BE;">4.6.2</div>
+              <div class="sst-num" style="background:rgba(30,78,168,0.1);color:#1E4EA8;">4.6.2</div>
               <div class="sst-info">
                 <div class="sst-name">디스플레이 SST<span class="sst-name-en">Display SST</span></div>
                 <div class="sst-brief">디스플레이와 터치스크린의 규격 충족 여부를 검증합니다. 대비, 색상 해상도, 픽셀 무결성, 백라이트 그래디언트, 상태 표시등 색상/밝기, DCP 기능 및 통신 확인.</div>
@@ -526,7 +526,7 @@
             <div class="sst-footer">
               <span class="tag tag-pages">11 페이지</span>
               <span class="tag tag-op">작업자 실행</span>
-              <span class="tag" style="background:var(--v-blue-bg);color:#2B62BE;">레퍼런스 디바이스 불필요</span>
+              <span class="tag" style="background:var(--v-blue-bg);color:#1E4EA8;">레퍼런스 디바이스 불필요</span>
             </div>
             <div class="sst-detail">
               <div class="sst-detail-in">
@@ -552,7 +552,7 @@
       <!-- ── 카테고리: 유체 & 공기 시스템 ─────────────── -->
       <section class="cat-section" id="cat-fluid" data-cat="fluid">
         <div class="cat-bar">
-          <span class="cat-dot" style="background:#266B52"></span>
+          <span class="cat-dot" style="background:#105742"></span>
           <span class="cat-name">유체 &amp; 공기 시스템<span class="cat-name-en">Fluid &amp; Air System</span></span>
           <span class="cat-count">5개 항목</span>
         </div>
@@ -560,7 +560,7 @@
 
           <div class="sst-card" data-cat="fluid" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(62,122,103,0.1);color:#266B52;">4.6.3</div>
+              <div class="sst-num" style="background:rgba(16,87,66,0.1);color:#105742;">4.6.3</div>
               <div class="sst-info">
                 <div class="sst-name">ARPS SST</div>
                 <div class="sst-brief">ARPS 시스템 규격 충족 여부를 검증합니다. 펌프, 밸브, 압력 센서 어셈블리, 튜빙 연결부의 공기 누설 없음 확인.</div>
@@ -600,7 +600,7 @@
 
           <div class="sst-card" data-cat="fluid" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(62,122,103,0.1);color:#266B52;">4.6.16</div>
+              <div class="sst-num" style="background:rgba(16,87,66,0.1);color:#105742;">4.6.16</div>
               <div class="sst-info">
                 <div class="sst-name">액체 레벨 센서 SST<span class="sst-name-en">Liquid Level Sensor SST</span></div>
                 <div class="sst-brief">LLS가 상·하한 범위에서 액체 레벨을 정확히 감지하고, 챔버 존재 여부 및 거품 감지를 올바르게 수행하는지 검증합니다.</div>
@@ -630,7 +630,7 @@
 
           <div class="sst-card" data-cat="fluid" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(62,122,103,0.1);color:#266B52;">4.6.17</div>
+              <div class="sst-num" style="background:rgba(16,87,66,0.1);color:#105742;">4.6.17</div>
               <div class="sst-info">
                 <div class="sst-name">공기방울 감지기 SST<span class="sst-name-en">Air Bubble Detector SST</span></div>
                 <div class="sst-brief">ABD가 20 μL 공기방울과 튜빙 존재를 올바르게 감지하는지 검증합니다.</div>
@@ -661,7 +661,7 @@
 
           <div class="sst-card" data-cat="fluid" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(62,122,103,0.1);color:#266B52;">4.6.18</div>
+              <div class="sst-num" style="background:rgba(16,87,66,0.1);color:#105742;">4.6.18</div>
               <div class="sst-info">
                 <div class="sst-name">리턴 클램프 SST<span class="sst-name-en">Return Clamp SST</span></div>
                 <div class="sst-brief">리턴 클램프 규격 충족 여부를 검증합니다. 튜빙 존재 감지, 최대 전류, 홀딩 전류, 개폐 시간 확인.</div>
@@ -691,7 +691,7 @@
 
           <div class="sst-card" data-cat="fluid" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(62,122,103,0.1);color:#266B52;">4.6.19</div>
+              <div class="sst-num" style="background:rgba(16,87,66,0.1);color:#105742;">4.6.19</div>
               <div class="sst-info">
                 <div class="sst-name">액체 누수 감지기 SST<span class="sst-name-en">Liquid Leakage Detector SST</span></div>
                 <div class="sst-brief">LLD(액체 누수 감지기)가 기기 하부에서 유체를 올바르게 감지하는지 검증합니다.</div>
@@ -727,7 +727,7 @@
       <!-- ── 카테고리: 기계부 ──────────────────────────── -->
       <section class="cat-section" id="cat-mechanical" data-cat="mechanical">
         <div class="cat-bar">
-          <span class="cat-dot" style="background:#C4700F"></span>
+          <span class="cat-dot" style="background:#D4700A"></span>
           <span class="cat-name">기계부<span class="cat-name-en">Mechanical Components</span></span>
           <span class="cat-count">6개 항목</span>
         </div>
@@ -735,7 +735,7 @@
 
           <div class="sst-card" data-cat="mechanical" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(196,123,46,0.1);color:#C4700F;">4.6.6</div>
+              <div class="sst-num" style="background:rgba(212,112,10,0.1);color:#D4700A;">4.6.6</div>
               <div class="sst-info">
                 <div class="sst-name">핀치 밸브 SST<span class="sst-name-en">Pinch Valve SST</span></div>
                 <div class="sst-brief">중앙·시계방향·반시계방향 위치 이동 시간과 모터 전류를 검증하며, 작업자의 밸브 위치 식별 능력을 확인합니다.</div>
@@ -767,7 +767,7 @@
 
           <div class="sst-card" data-cat="mechanical" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(196,123,46,0.1);color:#C4700F;">4.6.7</div>
+              <div class="sst-num" style="background:rgba(212,112,10,0.1);color:#D4700A;">4.6.7</div>
               <div class="sst-info">
                 <div class="sst-name">압력 센서 SST<span class="sst-name-en">Pressure Sensor SST</span></div>
                 <div class="sst-brief">다양한 압력 범위에서 압력 센서와 솔레노이드 어셈블리의 정확도 및 올바른 압력 포드 위치를 외부 교정 압력계로 검증합니다.</div>
@@ -810,7 +810,7 @@
 
           <div class="sst-card" data-cat="mechanical" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(196,123,46,0.1);color:#C4700F;">4.6.8</div>
+              <div class="sst-num" style="background:rgba(212,112,10,0.1);color:#D4700A;">4.6.8</div>
               <div class="sst-info">
                 <div class="sst-name">저울 SST<span class="sst-name-en">Scale SST</span></div>
                 <div class="sst-brief">저울의 정확도, 히스테리시스, LED 기능, 올바른 저울 위치를 교정 분동을 사용하여 검증합니다.</div>
@@ -840,7 +840,7 @@
 
           <div class="sst-card" data-cat="mechanical" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(196,123,46,0.1);color:#C4700F;">4.6.9</div>
+              <div class="sst-num" style="background:rgba(212,112,10,0.1);color:#D4700A;">4.6.9</div>
               <div class="sst-info">
                 <div class="sst-name">로더 SST<span class="sst-name-en">Loader SST</span></div>
                 <div class="sst-brief">로더가 전 행정을 요구 속도로 이동하는지, 모든 로더 모터 위치가 올바른지 검증합니다.</div>
@@ -872,7 +872,7 @@
 
           <div class="sst-card" data-cat="mechanical" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(196,123,46,0.1);color:#C4700F;">4.6.10</div>
+              <div class="sst-num" style="background:rgba(212,112,10,0.1);color:#D4700A;">4.6.10</div>
               <div class="sst-info">
                 <div class="sst-name">모터 SST<span class="sst-name-en">Motor SST</span></div>
                 <div class="sst-brief">각 모터의 속도 정확도, 주행거리/엔코더 정확도, 기동/정지 응답, 모터 전류, 위치 정확성을 검증합니다.</div>
@@ -900,7 +900,7 @@
 
           <div class="sst-card" data-cat="mechanical" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(196,123,46,0.1);color:#C4700F;">4.6.24</div>
+              <div class="sst-num" style="background:rgba(212,112,10,0.1);color:#D4700A;">4.6.24</div>
               <div class="sst-info">
                 <div class="sst-name">주사기 펌프 SST<span class="sst-name-en">Syringe Pump SST</span></div>
                 <div class="sst-brief">주사기 펌프의 이동 거리, 중량 측정, 용액 주입 성능이 규격을 충족하는지 검증합니다.</div>
@@ -934,7 +934,7 @@
       <!-- ── 카테고리: 회로 기판 ───────────────────────── -->
       <section class="cat-section" id="cat-boards" data-cat="boards">
         <div class="cat-bar">
-          <span class="cat-dot" style="background:#7E3578"></span>
+          <span class="cat-dot" style="background:#72256B"></span>
           <span class="cat-name">회로 기판<span class="cat-name-en">Circuit Boards</span></span>
           <span class="cat-count">5개 항목</span>
         </div>
@@ -942,7 +942,7 @@
 
           <div class="sst-card" data-cat="boards" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(139,82,135,0.1);color:#7E3578;">4.6.11</div>
+              <div class="sst-num" style="background:rgba(114,37,107,0.1);color:#72256B;">4.6.11</div>
               <div class="sst-info">
                 <div class="sst-name">전원 보드 SST<span class="sst-name-en">Power Board SST</span></div>
                 <div class="sst-brief">전원 보드 규격을 검증합니다. 전원 공급장치, PSC 프로세서 통신, 액추에이터, 온도 센서, 배터리, 전원 제어 패널, 스피커, 디스플레이 등 종합 확인.</div>
@@ -977,7 +977,7 @@
 
           <div class="sst-card" data-cat="boards" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(139,82,135,0.1);color:#7E3578;">4.6.12</div>
+              <div class="sst-num" style="background:rgba(114,37,107,0.1);color:#72256B;">4.6.12</div>
               <div class="sst-info">
                 <div class="sst-name">메인 보드 SST<span class="sst-name-en">Main Board SST</span></div>
                 <div class="sst-brief">메인 보드와 전원·안전 보드 프로세서 간의 기능적 통신이 규격을 충족하는지 검증합니다. 완전 자동화.</div>
@@ -1004,7 +1004,7 @@
 
           <div class="sst-card" data-cat="boards" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(139,82,135,0.1);color:#7E3578;">4.6.13</div>
+              <div class="sst-num" style="background:rgba(114,37,107,0.1);color:#72256B;">4.6.13</div>
               <div class="sst-info">
                 <div class="sst-name">안전 보드 SST<span class="sst-name-en">Safety Board SST</span></div>
                 <div class="sst-brief">안전·메인·전원 보드 프로세서 간 통신 및 안전 관련 구성요소가 규격을 충족하는지 검증합니다.</div>
@@ -1041,7 +1041,7 @@
 
           <div class="sst-card" data-cat="boards" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(139,82,135,0.1);color:#7E3578;">4.6.14</div>
+              <div class="sst-num" style="background:rgba(114,37,107,0.1);color:#72256B;">4.6.14</div>
               <div class="sst-info">
                 <div class="sst-name">드라이버 보드 SST<span class="sst-name-en">Driver Board SST</span></div>
                 <div class="sst-brief">CP와 CP 위임 FPGA 간 통신 및 액추에이터 전원 차단 기능을 검증합니다. 완전 자동화.</div>
@@ -1069,7 +1069,7 @@
 
           <div class="sst-card" data-cat="boards" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(139,82,135,0.1);color:#7E3578;">4.6.15</div>
+              <div class="sst-num" style="background:rgba(114,37,107,0.1);color:#72256B;">4.6.15</div>
               <div class="sst-info">
                 <div class="sst-name">절연 보드 SST<span class="sst-name-en">Isolation Board SST</span></div>
                 <div class="sst-brief">I/O 포트 기능을 검증합니다. 직렬 널-모뎀 연결(3×DB9), USB 포트 착탈 감지, 원격 경보 커넥터 도통 확인.</div>
@@ -1106,7 +1106,7 @@
       <!-- ── 카테고리: 센서 & 입출력 ─────────────────── -->
       <section class="cat-section" id="cat-sensors" data-cat="sensors">
         <div class="cat-bar">
-          <span class="cat-dot" style="background:#A83030"></span>
+          <span class="cat-dot" style="background:#C22020"></span>
           <span class="cat-name">센서 &amp; 입출력<span class="cat-name-en">Sensors &amp; I/O</span></span>
           <span class="cat-count">3개 항목</span>
         </div>
@@ -1114,7 +1114,7 @@
 
           <div class="sst-card" data-cat="sensors" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(176,69,69,0.09);color:#A83030;">4.6.4</div>
+              <div class="sst-num" style="background:rgba(194,32,32,0.09);color:#C22020;">4.6.4</div>
               <div class="sst-info">
                 <div class="sst-name">바코드 리더 SST<span class="sst-name-en">Barcode Reader SST</span></div>
                 <div class="sst-brief">핸드헬드 바코드 리더의 2D/1D 바코드 성능을 검증합니다. GS1, PDF417, QR 코드, DataMatrix 지원.</div>
@@ -1138,7 +1138,7 @@
 
           <div class="sst-card" data-cat="sensors" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(176,69,69,0.09);color:#A83030;">4.6.5</div>
+              <div class="sst-num" style="background:rgba(194,32,32,0.09);color:#C22020;">4.6.5</div>
               <div class="sst-info">
                 <div class="sst-name">오디오 SST<span class="sst-name-en">Audio SST</span></div>
                 <div class="sst-brief">메인 스피커와 마이크로폰이 저·중·고 볼륨에서 규격을 충족하는지 검증합니다.</div>
@@ -1162,7 +1162,7 @@
 
           <div class="sst-card" data-cat="sensors" data-reveal onclick="toggleCard(this)">
             <div class="sst-card-head">
-              <div class="sst-num" style="background:rgba(176,69,69,0.09);color:#A83030;">4.6.20</div>
+              <div class="sst-num" style="background:rgba(194,32,32,0.09);color:#C22020;">4.6.20</div>
               <div class="sst-info">
                 <div class="sst-name">주변 온도 센서 SST<span class="sst-name-en">Ambient Temperature Sensor SST</span></div>
                 <div class="sst-brief">드립 트레이 하단의 온도 프로브가 정확한 온도를 측정하는지 검증합니다.</div>
