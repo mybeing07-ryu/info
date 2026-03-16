@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="ko" class="theme-light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AK98 투석기 운영 가이드 · Vantive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { interpolate-size: allow-keywords; }
+
+    /* Vantive original palette */
+    :root {
+      --plum:        #72256B;
+      --plum-d:      #5C1A65;
+      --pine:        #105742;
+      --amber:       #D4700A;
+      --cream:       #FFFAEB;
+      --danger:      #C22020;
+      --blue:        #1E4EA8;
+      --plum-light:  rgba(114,37,107,0.09);
+      --pine-light:  rgba(16,87,66,0.09);
+      --amber-light: rgba(212,112,10,0.09);
+    }
+
+    html.theme-dark {
+      --bg: #0D0B08; --surface: #161310; --surface-hover: #1E1B16;
+      --border: rgba(255,255,255,0.07);
+      --text: #F0EBE0; --text-secondary: #9A9080;
+      --accent: #9B50A0;
+    }
+    html.theme-light {
+      --bg: #FFFAEB; --surface: #FFFFFF; --surface-hover: #FFF5D6;
+      --surface-2: #FFF0C8;
+      --border: rgba(0,0,0,0.07); --border-strong: rgba(0,0,0,0.13);
+      --text: #1A1208; --text-secondary: #6B6358;
+      --accent: #72256B;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+      background: var(--bg); color: var(--text);
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+    h1,h2,h3,h4,h5,h6 {
+      color: var(--text); letter-spacing: -0.02em; line-height: 1.15;
+      font-family: 'Noto Sans KR', 'Inter', sans-serif;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate { animation: fadeInUp 0.6s ease-out both; }
+    .animate.delay-1 { animation-delay: 0.08s; }
+    .animate.delay-2 { animation-delay: 0.16s; }
+    .animate.delay-3 { animation-delay: 0.24s; }
+    .animate.delay-4 { animation-delay: 0.32s; }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+    @media print {
+      body { background: white !important; color: black !important; }
+      .viz-menu, .sticky-filter { display: none !important; }
+      .reveal { opacity: 1 !important; transform: none !important; }
+      * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+
+    /* ===== MENU ===== */
+    .viz-menu { position: fixed; top: 16px; right: 16px; z-index: 9999; }
+    .viz-menu-toggle {
+      width: 42px; height: 42px; border-radius: 11px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .viz-menu-dropdown {
+      position: absolute; top: 50px; right: 0; min-width: 190px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 8px;
+      opacity: 0; visibility: hidden; transform: translateY(-8px);
+      transition: all 0.2s; box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    .viz-menu-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .viz-menu-dropdown button {
+      width: 100%; background: transparent; border: none; text-align: left;
+      padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 13px;
+      color: var(--text); font-family: inherit; display: flex; align-items: center; gap: 8px;
+    }
+    .viz-menu-dropdown button:hover { background: var(--surface-hover); }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(145deg, var(--plum-d) 0%, var(--plum) 55%, #8B3080 100%);
+      padding: 72px 24px 56px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% -5%, rgba(255,250,235,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,250,235,0.14); border: 1px solid rgba(255,250,235,0.22);
+      color: rgba(255,250,235,0.85); border-radius: 20px;
+      padding: 5px 14px; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 3.2rem; font-weight: 800; color: #FFFAEB;
+      margin-bottom: 14px; letter-spacing: -0.03em; line-height: 1.1;
+    }
+    .hero-sub {
+      font-size: 1.05rem; color: rgba(255,250,235,0.72);
+      max-width: 520px; margin: 0 auto 36px; line-height: 1.65;
+    }
+    .hero-stats {
+      display: flex; justify-content: center; gap: 0;
+      background: rgba(255,250,235,0.10); border: 1px solid rgba(255,250,235,0.18);
+      border-radius: 16px; padding: 0; max-width: 560px; margin: 0 auto;
+      overflow: hidden;
+    }
+    .stat {
+      flex: 1; padding: 20px 16px; text-align: center;
+      border-right: 1px solid rgba(255,250,235,0.12);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num { font-size: 2rem; font-weight: 800; color: #FFFAEB; line-height: 1; margin-bottom: 4px; }
+    .stat-lbl { font-size: 11px; color: rgba(255,250,235,0.60); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+
+    /* ===== STICKY FILTER ===== */
+    .sticky-filter {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,250,235,0.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-inner {
+      max-width: 1100px; margin: 0 auto; padding: 10px 24px;
+      display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; align-items: center;
+    }
+    .filter-inner::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      flex-shrink: 0; padding: 7px 15px; border-radius: 20px;
+      font-size: 12px; font-weight: 600; border: 1.5px solid transparent;
+      background: transparent; color: var(--text-secondary);
+      cursor: pointer; font-family: inherit; transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .filter-btn:hover { background: var(--surface); color: var(--text); }
+    .filter-btn.active {
+      background: var(--surface); color: var(--text);
+      border-color: var(--border-strong); box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .filter-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+
+    /* ===== MAIN CONTAINER ===== */
+    .container { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ===== PHASE GROUP ===== */
+    .phase-group { margin-bottom: 48px; display: none; }
+    .phase-group.show { display: block; }
+    .phase-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 20px; padding-bottom: 14px;
+      border-bottom: 2px solid var(--border);
+    }
+    .phase-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .phase-title { font-size: 1.25rem; font-weight: 700; color: var(--text); }
+    .phase-title-en { display: block; font-size: 0.72rem; font-weight: 400; opacity: 0.55; letter-spacing: 0.04em; font-style: italic; margin-top: 1px; }
+    .phase-badge {
+      margin-left: auto; font-size: 10px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+
+    /* ===== STEP CARDS ===== */
+    .step-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; margin-bottom: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      overflow: hidden; transition: box-shadow 0.2s;
+    }
+    .step-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
+    .step-head {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 18px; cursor: pointer; user-select: none;
+    }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; flex-shrink: 0; margin-top: 1px;
+    }
+    .step-content { flex: 1; min-width: 0; }
+    .step-title { font-size: 14px; font-weight: 700; line-height: 1.45; color: var(--text); }
+    .step-brief { font-size: 13px; color: var(--text-secondary); margin-top: 4px; line-height: 1.55; }
+    .step-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    .step-tag {
+      font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+      letter-spacing: 0.04em;
+    }
+    .tag-caution { background: rgba(194,32,32,0.10); color: var(--danger); }
+    .tag-tip    { background: rgba(16,87,66,0.09); color: var(--pine); }
+    .tag-note   { background: rgba(30,78,168,0.09); color: var(--blue); }
+    .tag-auto   { background: rgba(212,112,10,0.09); color: var(--amber); }
+
+    .step-chev {
+      color: var(--text-secondary); flex-shrink: 0; width: 26px; height: 26px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.04); border-radius: 50%;
+      transition: transform 0.25s, background 0.15s;
+    }
+    .step-chev.open { transform: rotate(180deg); background: var(--plum-light); color: var(--plum); }
+
+    .step-detail {
+      overflow: hidden; max-height: 0;
+      transition: max-height 0.38s cubic-bezier(.4,0,.2,1);
+    }
+    .step-detail.open { max-height: 800px; border-top: 1px solid var(--border); }
+    .step-detail-in {
+      padding: 16px 18px 18px 64px;
+      background: rgba(255,250,235,0.45);
+    }
+    .detail-block { margin-bottom: 12px; }
+    .detail-block:last-child { margin-bottom: 0; }
+    .detail-lbl {
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--pine); margin-bottom: 6px;
+    }
+    .detail-text {
+      font-size: 13px; line-height: 1.7; color: var(--text);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 9px; padding: 11px 13px;
+    }
+    .detail-text ul { list-style: none; padding: 0; }
+    .detail-text li { padding: 3px 0 3px 16px; position: relative; }
+    .detail-text li::before { content: '·'; position: absolute; left: 5px; color: var(--text-secondary); }
+    .caution-box {
+      background: rgba(194,32,32,0.07); border: 1px solid rgba(194,32,32,0.18);
+      border-left: 3px solid var(--danger);
+      border-radius: 9px; padding: 11px 13px;
+      font-size: 13px; line-height: 1.65; color: #7a1010;
+    }
+    .tip-box {
+      background: var(--pine-light); border: 1px solid rgba(16,87,66,0.18);
+      border-left: 3px solid var(--pine);
+      border-radius: 9px; padding: 11px 13px;
+      font-size: 13px; line-height: 1.65; color: #0a3d2b;
+    }
+
+    /* ===== NOTICE CARD (no expand) ===== */
+    .notice-card {
+      background: var(--plum-light); border: 1px solid rgba(114,37,107,0.16);
+      border-radius: 14px; padding: 18px 20px; margin-bottom: 12px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .notice-icon { font-size: 22px; flex-shrink: 0; line-height: 1; }
+    .notice-text { font-size: 13.5px; line-height: 1.65; color: var(--text); }
+    .notice-text strong { color: var(--plum); }
+
+    /* ===== OVERVIEW INFO CARDS ===== */
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-bottom: 12px; }
+    .info-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px;
+    }
+    .info-card-title { font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .info-card-body { font-size: 13.5px; line-height: 1.6; color: var(--text); }
+
+    /* ===== SCREEN LABEL LIST ===== */
+    .screen-list {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px;
+    }
+    .screen-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 9px; padding: 8px 11px; font-size: 12.5px;
+    }
+    .screen-num {
+      font-size: 10px; font-weight: 800; color: var(--plum);
+      background: var(--plum-light); border-radius: 5px;
+      padding: 2px 6px; flex-shrink: 0; font-family: 'Courier New', monospace;
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 2.2rem; }
+      .hero-stats { flex-wrap: wrap; }
+      .stat { min-width: 50%; }
+      .screen-list { grid-template-columns: 1fr; }
+      .step-detail-in { padding-left: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Menu ── -->
+<nav class="viz-menu" aria-label="메뉴">
+  <button class="viz-menu-toggle" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="메뉴 열기">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="viz-menu-dropdown">
+    <button onclick="toggleTheme()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+      다크/라이트 모드
+    </button>
+    <button onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      인쇄
+    </button>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<header class="hero">
+  <div class="hero-eyebrow animate">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    운영 가이드 · Operator Guide
+  </div>
+  <h1 class="animate delay-1">AK98<br>투석기 운영 가이드</h1>
+  <p class="hero-sub animate delay-2">Baxter AK98 혈액투석기의 치료 준비부터 종료까지 단계별 운영 절차 안내</p>
+  <div class="hero-stats animate delay-3">
+    <div class="stat">
+      <div class="stat-num">14</div>
+      <div class="stat-lbl">절차 단계</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">48</div>
+      <div class="stat-lbl">세부 항목</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-lbl">부가 기능</div>
+    </div>
+  </div>
+</header>
+
+<!-- ── Sticky Filter ── -->
+<div class="sticky-filter">
+  <div class="filter-inner" id="filterBar">
+    <button class="filter-btn active" onclick="filterPhase('all', this)">전체</button>
+    <button class="filter-btn" onclick="filterPhase('overview', this)"><span class="filter-dot" style="background:#72256B"></span>개요</button>
+    <button class="filter-btn" onclick="filterPhase('setup', this)"><span class="filter-dot" style="background:#105742"></span>준비·장착</button>
+    <button class="filter-btn" onclick="filterPhase('treatment', this)"><span class="filter-dot" style="background:#D4700A"></span>치료</button>
+    <button class="filter-btn" onclick="filterPhase('end', this)"><span class="filter-dot" style="background:#1E4EA8"></span>종료·소독</button>
+    <button class="filter-btn" onclick="filterPhase('feature', this)"><span class="filter-dot" style="background:#6CA07A"></span>부가기능</button>
+  </div>
+</div>
+
+<!-- ── Main ── -->
+<main class="container" id="main">
+
+  <!-- ══════════════════════════════════════════
+       PHASE 1 : AK96 대비 변경사항
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="overview">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(114,37,107,0.10)">🆕</div>
+      <div>
+        <div class="phase-title">AK96 대비 변경사항
+          <span class="phase-title-en">What's New vs. AK96</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(114,37,107,0.09);color:#72256B">개요</span>
+    </div>
+
+    <div class="notice-card">
+      <div class="notice-icon">💡</div>
+      <div class="notice-text">AK98은 AK96 대비 여러 구조적·기능적 변경이 이루어졌습니다. 아래 항목을 숙지하고 운영에 반영하십시오.</div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-title">🔴 새로운 알람 표시등</div>
+        <div class="info-card-body">조작 패널 상단에 새로운 알람 표시등(Alarm Indication Light)이 추가됨.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">🖥️ 컬러 터치스크린</div>
+        <div class="info-card-body">신형 컬러 터치스크린 적용.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">🔧 투석기 홀더 암 재설계</div>
+        <div class="info-card-body">Dialyzer holder arm이 재설계되어 Expansion chamber holder bracket에 통합됨.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">💧 후면 소독액 인렛 고정화</div>
+        <div class="info-card-body">영구적인 후면 소독액 인렛 튜브(Rear disinfectant inlet tube)가 추가됨.<br><strong style="color:var(--danger)">※ 전면 Yellow chemical port 제거됨.</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 2 : 화면 구성 개요
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="overview">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(114,37,107,0.10)">🖥️</div>
+      <div>
+        <div class="phase-title">화면 구성 개요
+          <span class="phase-title-en">Screen Overview</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(114,37,107,0.09);color:#72256B">개요</span>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(114,37,107,0.10);color:#72256B">①</div>
+        <div class="step-content">
+          <div class="step-title">주요 조작 버튼 (상단 패널)</div>
+          <div class="step-brief">혈액 펌프·음소거 등 핵심 조작 버튼 위치</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">구성 요소</div>
+            <div class="detail-text">
+              <ul>
+                <li>치료 개요 필드 (Treatment overview fields)</li>
+                <li>정보 필드 (Information field)</li>
+                <li>상태 정보 바 (Status information bar) × 2</li>
+                <li>주 전원 표시등 (Main switch indicator)</li>
+                <li>스케줄 표시등 (Schedule indicator)</li>
+                <li>음소거 버튼 (Mute button)</li>
+                <li>혈액 펌프 속도 증가 / 펌프 버튼 / 속도 감소</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(114,37,107,0.10);color:#72256B">②</div>
+        <div class="step-content">
+          <div class="step-title">화면 버튼 전체 목록 (1–27번)</div>
+          <div class="step-brief">터치스크린 내 모든 기능 버튼 번호 및 명칭</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">버튼 번호 / 명칭</div>
+            <div class="screen-list">
+              <div class="screen-item"><span class="screen-num">1</span>정맥 압력 제어 (Venous pressure)</div>
+              <div class="screen-item"><span class="screen-num">2</span>동맥 압력 제어 (Arterial pressure)</div>
+              <div class="screen-item"><span class="screen-num">3</span>기기 상태 표시등</div>
+              <div class="screen-item"><span class="screen-num">4</span>시간 표시</div>
+              <div class="screen-item"><span class="screen-num">5</span>혈액 경로 (Blood path)</div>
+              <div class="screen-item"><span class="screen-num">6</span>투석액 경로 (Fluid path)</div>
+              <div class="screen-item"><span class="screen-num">7</span>BPM 버튼</div>
+              <div class="screen-item"><span class="screen-num">8</span>BPM 수치 표시 필드</div>
+              <div class="screen-item"><span class="screen-num">9</span>Clearance 측정 수치 필드</div>
+              <div class="screen-item"><span class="screen-num">10</span>Clearance 측정 버튼</div>
+              <div class="screen-item"><span class="screen-num">11–15</span>치료 개요 필드</div>
+              <div class="screen-item"><span class="screen-num">16</span>알람 탭</div>
+              <div class="screen-item"><span class="screen-num">17</span>정보 탭</div>
+              <div class="screen-item"><span class="screen-num">18</span>정보 필드</div>
+              <div class="screen-item"><span class="screen-num">19</span>프라이밍 버튼</div>
+              <div class="screen-item"><span class="screen-num">20</span>린스백 버튼</div>
+              <div class="screen-item"><span class="screen-num">21</span>소독 버튼</div>
+              <div class="screen-item"><span class="screen-num">22</span>혈액 버튼</div>
+              <div class="screen-item"><span class="screen-num">23</span>투석액 버튼</div>
+              <div class="screen-item"><span class="screen-num">24</span>Fluid bypass 버튼</div>
+              <div class="screen-item"><span class="screen-num">25</span>한외여과(UF) 버튼</div>
+              <div class="screen-item"><span class="screen-num">26</span>치료 이력 페이지</div>
+              <div class="screen-item"><span class="screen-num">27</span>상태 바 (Status bar)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 3 : 투석 준비
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="setup">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(16,87,66,0.10)">⚙️</div>
+      <div>
+        <div class="phase-title">투석 준비
+          <span class="phase-title-en">Dialysis Preparation</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(16,87,66,0.09);color:#105742">준비·장착</span>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(16,87,66,0.10);color:#105742">1</div>
+        <div class="step-content">
+          <div class="step-title">전원 켜기</div>
+          <div class="step-brief">전원 버튼을 누른다.</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">조작</div>
+            <div class="detail-text">기기 전면 또는 패널의 <strong>전원(Power) 버튼</strong>을 눌러 기기를 기동한다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(16,87,66,0.10);color:#105742">2</div>
+        <div class="step-content">
+          <div class="step-title">약품 연결</div>
+          <div class="step-brief">Acid 약물과 Bicart를 연결한다.</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">조작</div>
+            <div class="detail-text"><strong>Acid 약물</strong>과 <strong>Bicart(중탄산염)</strong>를 기기에 연결한다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(16,87,66,0.10);color:#105742">3</div>
+        <div class="step-content">
+          <div class="step-title">투석액 선택 (필요시)</div>
+          <div class="step-brief">투석액 종류에 따라 적절한 투석액을 선택한다.</div>
+          <div class="step-tags"><span class="step-tag tag-note">조건부</span></div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">조작</div>
+            <div class="detail-text">필요한 경우 투석액 종류에 따라 화면에서 투석액을 선택한다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 4 : 혈액라인 장착
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="setup">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(16,87,66,0.10)">🩸</div>
+      <div>
+        <div class="phase-title">혈액라인 장착
+          <span class="phase-title-en">Blood Line Setup</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(16,87,66,0.09);color:#105742">준비·장착</span>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(16,87,66,0.10);color:#105742">1</div>
+        <div class="step-content">
+          <div class="step-title">동맥 라인 장착 (Artery Line)</div>
+          <div class="step-brief">Blood pump cover 열기 → 라인 장착 → cover 닫기</div>
+          <div class="step-tags"><span class="step-tag tag-caution">방향 주의</span></div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li>Blood pump cover를 열고 blood line을 장착한 후 cover를 닫는다. <strong>(화살표 방향 주의)</strong></li>
+                <li>Arterial chamber를 <strong>왼쪽 holder</strong>에 장착하고 방향을 확인한다.</li>
+                <li>반대쪽 line을 clamp에 장착한다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(16,87,66,0.10);color:#105742">2</div>
+        <div class="step-content">
+          <div class="step-title">정맥 라인 장착 (Vein Line)</div>
+          <div class="step-brief">Venous chamber 장착 → clamp 연결 → Dialyzer 연결</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li>Venous chamber를 장착한다.</li>
+                <li>Venous clamp를 장착하고 <strong>saline drain bag</strong>을 연결한다.</li>
+                <li>Dialyzer를 연결한다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 5 : 프라이밍
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="setup">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(16,87,66,0.10)">💧</div>
+      <div>
+        <div class="phase-title">프라이밍
+          <span class="phase-title-en">Priming</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(16,87,66,0.09);color:#105742">준비·장착</span>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(16,87,66,0.10);color:#105742">1</div>
+        <div class="step-content">
+          <div class="step-title">Blood pump 라인 장착 확인</div>
+          <div class="step-brief">Blood pump 버튼을 눌러 라인 장착 여부 확인 후 펌프 정지</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">조작</div>
+            <div class="detail-text">Blood pump 버튼을 눌러 blood pump에 line이 올바르게 장착되는 것을 확인한 후 <strong>펌프를 정지</strong>한다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(16,87,66,0.10);color:#105742">2</div>
+        <div class="step-content">
+          <div class="step-title">센서 연결 및 클램프 닫기</div>
+          <div class="step-brief">Venous·Arterial 센서 연결 및 각 chamber 주입 라인 clamp close</div>
+          <div class="step-tags"><span class="step-tag tag-note">Heparin 미연결 시 line clamp</span></div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li>Venous sensor 및 Arterial sensor를 연결한다.</li>
+                <li>각 chamber 위의 주입 라인 clamp를 <strong>close</strong>한다.</li>
+                <li>Heparin을 연결하지 않을 경우 line을 clamp한다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(16,87,66,0.10);color:#105742">3</div>
+        <div class="step-content">
+          <div class="step-title">Saline 연결</div>
+          <div class="step-brief">Arterial line에 saline을 연결한다.</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">조작</div>
+            <div class="detail-text">Arterial line에 <strong>saline(생리식염수)</strong>을 연결한다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(16,87,66,0.10);color:#105742">4</div>
+        <div class="step-content">
+          <div class="step-title">Prime 실행</div>
+          <div class="step-brief">Prime 버튼 → Manual 선택 → Blood pump 가동</div>
+          <div class="step-tags"><span class="step-tag tag-auto">자동 정지 있음</span></div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li><strong>Prime 버튼</strong>을 눌러 Manual 모드를 선택하고 확인 후 blood pump를 가동한다.</li>
+                <li>Arterial chamber를 채운 후 바로 세우고, dialyzer의 공기가 제거되면 venous chamber를 knob을 돌려 적절 부위까지 saline으로 채운다.</li>
+                <li>설정 volume만큼 prime이 완료되면 <strong>펌프가 자동으로 정지</strong>된다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 6 : 재순환 및 설정
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="setup">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(16,87,66,0.10)">🔄</div>
+      <div>
+        <div class="phase-title">재순환 및 설정
+          <span class="phase-title-en">Recirculation &amp; Setting</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(16,87,66,0.09);color:#105742">준비·장착</span>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(16,87,66,0.10);color:#105742">1</div>
+        <div class="step-content">
+          <div class="step-title">투석액 준비 확인 및 Fluid bypass</div>
+          <div class="step-brief">투석액 준비 완료 → fluid tube 연결 → Fluid bypass 버튼 누르기</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li>투석액 준비가 완료되면 화면의 <strong>Fluid bypass 버튼이 깜박인다.</strong></li>
+                <li>Fluid tube를 dialyzer에 연결하고 <strong>Fluid bypass 버튼</strong>을 누른다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(16,87,66,0.10);color:#105742">2</div>
+        <div class="step-content">
+          <div class="step-title">라인 연결 및 재순환 시작 (선택)</div>
+          <div class="step-brief">Artery·Vein 라인 연결 → Recirculation 및 Blood pump 가동</div>
+          <div class="step-tags"><span class="step-tag tag-note">선택 사항</span></div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li>Artery와 Vein line을 연결한다.</li>
+                <li>Blood pump 아래 infusion line saline을 연결하고 <strong>Fluid bypass clamp를 열어준다.</strong> (선택)</li>
+                <li>화면의 <strong>Recirculation</strong>을 누르고 blood pump를 가동한다. (선택)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(16,87,66,0.10);color:#105742">3</div>
+        <div class="step-content">
+          <div class="step-title">체중·시간·Heparin 설정</div>
+          <div class="step-brief">Time 버튼 → 체중·시간 확인 / Blood 버튼 → Heparin 설정</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li><strong>Time</strong> 부분을 눌러 체중과 치료 시간을 확인·설정한다.</li>
+                <li><strong>Blood 버튼</strong>을 눌러 Heparin을 설정한다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 7 : 환자 연결
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="treatment">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(212,112,10,0.10)">🏥</div>
+      <div>
+        <div class="phase-title">환자 연결
+          <span class="phase-title-en">Patient Connection</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(212,112,10,0.09);color:#D4700A">치료</span>
+    </div>
+
+    <div class="notice-card" style="background:rgba(194,32,32,0.07);border-color:rgba(194,32,32,0.16);">
+      <div class="notice-icon">⚠️</div>
+      <div class="notice-text"><strong style="color:var(--danger)">주의:</strong> 환자 연결 전 Blood line이 Priming detector에 올바르게 연결되어 있는지 반드시 확인하십시오.</div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(212,112,10,0.10);color:#D4700A">1</div>
+        <div class="step-content">
+          <div class="step-title">사전 확인</div>
+          <div class="step-brief">Infusion line clamp 확인 및 Priming detector 연결 확인</div>
+          <div class="step-tags"><span class="step-tag tag-caution">필수 확인</span></div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">확인 항목</div>
+            <div class="detail-text">
+              <ul>
+                <li>Blood pump 아래 <strong>infusion line이 clamp된 것을 확인</strong>한다.</li>
+                <li>Blood line이 <strong>Priming detector에 올바르게 연결</strong>되어 있는지 확인한다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(212,112,10,0.10);color:#D4700A">2</div>
+        <div class="step-content">
+          <div class="step-title">환자 연결 시작</div>
+          <div class="step-brief">화면 "Connect patient" → Arterial line 환자 연결 → Venous line drain 연결</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li>화면의 <strong>Connect patient</strong>를 누른다.</li>
+                <li>Arterial line을 환자에게 연결하고, Venous line을 <strong>drain</strong>에 연결한다.</li>
+                <li>Blood pump를 가동한다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(212,112,10,0.10);color:#D4700A">3</div>
+        <div class="step-content">
+          <div class="step-title">혈액 감지 후 정맥 연결 및 치료 시작</div>
+          <div class="step-brief">Priming detector 혈액 감지 → 펌프 자동 정지 → Venous line 환자 연결</div>
+          <div class="step-tags"><span class="step-tag tag-auto">자동 정지</span></div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li>Priming detector에서 혈액을 감지하면 <strong>펌프가 자동으로 정지</strong>한다.</li>
+                <li>Venous line을 환자에게 연결한다.</li>
+                <li>펌프를 가동하여 치료를 시작한다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 8 : 치료 시작 및 진행
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="treatment">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(212,112,10,0.10)">▶️</div>
+      <div>
+        <div class="phase-title">치료 시작 및 진행
+          <span class="phase-title-en">Treatment Start &amp; Progress</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(212,112,10,0.09);color:#D4700A">치료</span>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(212,112,10,0.10);color:#D4700A">1</div>
+        <div class="step-content">
+          <div class="step-title">Blood flow 설정</div>
+          <div class="step-brief">+/– 버튼으로 환자에 맞게 혈액 유량을 설정한다.</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">조작</div>
+            <div class="detail-text"><strong>+/– 버튼</strong>을 이용해 환자 처방에 맞게 혈액 유량(Blood flow rate)을 설정한다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(212,112,10,0.10);color:#D4700A">2</div>
+        <div class="step-content">
+          <div class="step-title">UF 버튼 활성화</div>
+          <div class="step-brief">UF 버튼이 깜박이면 눌러준다.</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">조작</div>
+            <div class="detail-text"><strong>Ultrafiltration(UF) 버튼</strong>이 깜박이면 눌러준다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(212,112,10,0.10);color:#D4700A">3</div>
+        <div class="step-content">
+          <div class="step-title">각 버튼 활성화 및 모니터링</div>
+          <div class="step-brief">Vein·Artery 안정 후 깜박이는 버튼 활성화 및 Venous chamber 수위 조절</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li>Vein과 Artery가 안정되면 깜박이는 각 버튼을 순서대로 눌러준다.</li>
+                <li>Venous chamber의 <strong>수위를 적절히 조절</strong>한다.</li>
+                <li>화면의 <strong>남은 치료 시간이 감소</strong>하는 것을 확인한다.</li>
+                <li>치료 중 blood pump 속도 조절 시 artery/vein 창이 깜박이면 해당 창을 눌러준다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 9 : 치료 종료
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="end">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(30,78,168,0.10)">🏁</div>
+      <div>
+        <div class="phase-title">치료 종료
+          <span class="phase-title-en">Treatment End</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(30,78,168,0.09);color:#1E4EA8">종료·소독</span>
+    </div>
+
+    <div class="notice-card" style="background:rgba(30,78,168,0.07);border-color:rgba(30,78,168,0.16);">
+      <div class="notice-icon">ℹ️</div>
+      <div class="notice-text">알람 코드 <strong style="color:var(--blue)">596 Treatment time expired</strong>가 발생하면 치료 시간이 종료된 것입니다. Confirm을 눌러 계속하거나 아래 절차를 따릅니다.</div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(30,78,168,0.10);color:#1E4EA8">1</div>
+        <div class="step-content">
+          <div class="step-title">치료 종료 확인 및 Rinse back 시작</div>
+          <div class="step-brief">치료 시간 0 확인 → Rinse back 터치 → 시간 패드에 0 입력</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li>치료 시간이 <strong>0이 아닌 경우</strong>: Rinse back을 터치하면 시간 패드가 나타남. <strong>0을 입력</strong>한다.</li>
+                <li>화면에 Rinse back이 한 번 더 나타나면 터치한다.<br><strong style="color:var(--danger)">(이후 투석으로 복귀 불가)</strong></li>
+              </ul>
+            </div>
+          </div>
+          <div class="detail-block">
+            <div class="caution-box">⚠️ Rinse back 진행 후에는 투석 상태로 돌아갈 수 없습니다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(30,78,168,0.10);color:#1E4EA8">2</div>
+        <div class="step-content">
+          <div class="step-title">Saline 연결 및 Rinse back 실행</div>
+          <div class="step-brief">Arterial line → saline 연결 → Blood pump 가동 → 자동 정지</div>
+          <div class="step-tags"><span class="step-tag tag-auto">자동 정지</span></div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li>Arterial line을 <strong>saline에 연결</strong>하고 blood pump를 가동한다.</li>
+                <li>Rinse back volume이 완료되면 <strong>blood pump가 자동으로 정지</strong>한다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(30,78,168,0.10);color:#1E4EA8">3</div>
+        <div class="step-content">
+          <div class="step-title">환자 분리 및 정리</div>
+          <div class="step-brief">환자 분리 확인 → Disconnect patient → Blood line 분리 → Air detector 비활성화</div>
+          <div class="step-tags"><span class="step-tag tag-caution">환자 분리 필수 확인</span></div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li><strong>반드시 환자와 분리가 된 것을 확인</strong>하고 <strong>Disconnect patient</strong>를 누른다.</li>
+                <li>Venous blood line을 <strong>Priming detector에서 분리</strong>한다.</li>
+                <li><strong>Air detector를 비활성화</strong>한다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 10 : Dialyzer & Bicart Empty
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="end">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(30,78,168,0.10)">🗑️</div>
+      <div>
+        <div class="phase-title">투석기 &amp; Bicart 비우기
+          <span class="phase-title-en">Dialyzer &amp; Bicart Empty</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(30,78,168,0.09);color:#1E4EA8">종료·소독</span>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(30,78,168,0.10);color:#1E4EA8">1</div>
+        <div class="step-content">
+          <div class="step-title">Dialyzer 방향 전환 및 Fluid tube 재연결</div>
+          <div class="step-brief">파란 Fluid tube 분리 후 기계 연결 → 투석기 붉은색 아래 방향 배치</div>
+          <div class="step-tags"><span class="step-tag tag-caution">방향 주의</span></div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li><strong>파란색 fluid tube</strong>를 dialyzer에서 분리하여 기계에 연결한다.</li>
+                <li>이때 dialyzer는 <strong>붉은색이 아래로</strong> 가도록 배치한다.</li>
+                <li>Dialyzer의 fluid part가 비워지면 <strong>붉은색 fluid tube</strong>를 기계에 장착한다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(30,78,168,0.10);color:#1E4EA8">2</div>
+        <div class="step-content">
+          <div class="step-title">Bicart Empty 실행</div>
+          <div class="step-brief">Suction tip 연결 → Bicart empty 버튼 → Bicart 상단 오픈(시간 단축)</div>
+          <div class="step-tags"><span class="step-tag tag-tip">시간 단축 팁</span></div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">절차</div>
+            <div class="detail-text">
+              <ul>
+                <li><strong>Suction tip</strong>을 기계에 연결한다.</li>
+                <li>화면의 <strong>Bicart empty</strong>를 누른다.</li>
+                <li>소요 시간 단축을 위해 <strong>Bicart 상단 부분을 오픈</strong>한다.</li>
+                <li>비워지면 Bicart cover를 닫고 소독을 진행한다.</li>
+                <li>Blood line을 기계에서 분리한다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 11 : 소독법
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="end">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(30,78,168,0.10)">🧴</div>
+      <div>
+        <div class="phase-title">소독법
+          <span class="phase-title-en">Disinfection</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(30,78,168,0.09);color:#1E4EA8">종료·소독</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-title">🌡️ Short Heat Citric / Citric 20%</div>
+        <div class="info-card-body">소독 시 <strong>Disinfection inlet tube</strong>에서 소독액 Suction이 가능함.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">🧼 Heat CleanCart</div>
+        <div class="info-card-body">Bicart 연결 부위를 통해 <strong>Heat CleanCart</strong> 소독이 가능함.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">💧 B(Blue) 인렛</div>
+        <div class="info-card-body"><strong>Disinfectant inlet tube B(Blue)</strong>를 통해 소독액 및 락스를 Suction하여 소독할 수 있음.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 12 : BPM 사용법
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="feature">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(108,160,122,0.12)">💓</div>
+      <div>
+        <div class="phase-title">BPM 사용법
+          <span class="phase-title-en">Blood Pressure Monitor Usage</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(108,160,122,0.12);color:#105742">부가기능</span>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(108,160,122,0.12);color:#105742">1</div>
+        <div class="step-content">
+          <div class="step-title">즉시 측정</div>
+          <div class="step-brief">BPM 흰색 버튼을 누르면 바로 측정</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">조작</div>
+            <div class="detail-text">BPM의 <strong>흰색 부위를 누르면 즉시 혈압 측정</strong>이 시작된다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(108,160,122,0.12);color:#105742">2</div>
+        <div class="step-content">
+          <div class="step-title">자동 측정 설정</div>
+          <div class="step-brief">BPM 화면에서 자동 측정 간격을 설정할 수 있음</div>
+          <div class="step-tags"><span class="step-tag tag-auto">자동 반복 측정</span></div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">조작</div>
+            <div class="detail-text">BPM 화면에서 자동 측정 간격을 설정하면 <strong>설정된 간격마다 자동으로 혈압을 측정</strong>한다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 13 : DIASCAN 사용법
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="feature">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(108,160,122,0.12)">📊</div>
+      <div>
+        <div class="phase-title">Diascan 사용법
+          <span class="phase-title-en">Diascan Usage</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(108,160,122,0.12);color:#105742">부가기능</span>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(108,160,122,0.12);color:#105742">1</div>
+        <div class="step-content">
+          <div class="step-title">Diascan 실행</div>
+          <div class="step-brief">Diascan 버튼을 눌러 측정 시작</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">조작</div>
+            <div class="detail-text"><strong>Diascan 버튼</strong>을 눌러 측정을 시작한다.</div>
+          </div>
+          <div class="detail-block">
+            <div class="detail-lbl">Distribution Volume 입력</div>
+            <div class="tip-box">Distribution Volume은 <strong>수동 입력</strong> 또는 <strong>Watson 공식</strong>에 의해 자동 입력이 가능합니다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 14 : PROFILE 사용법
+  ══════════════════════════════════════════ -->
+  <section class="phase-group show reveal" data-category="feature">
+    <div class="phase-header">
+      <div class="phase-icon" style="background:rgba(108,160,122,0.12)">📈</div>
+      <div>
+        <div class="phase-title">Profile 사용법
+          <span class="phase-title-en">Profile Usage</span>
+        </div>
+      </div>
+      <span class="phase-badge" style="background:rgba(108,160,122,0.12);color:#105742">부가기능</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-title">📉 Na / HCO₃ Linear</div>
+        <div class="info-card-body">Na 및 HCO₃의 <strong>선형 감소 모드(Linear graphs)</strong>를 사용한 프로파일링.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">📉 UF Rate – 선형 감소</div>
+        <div class="info-card-body">UF rate의 <strong>감소 선형 모드(Decreasing linear mode)</strong> 프로파일링.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">📶 UF Rate – 단계 감소</div>
+        <div class="info-card-body">UF rate의 <strong>감소 단계 모드(Decreasing step mode)</strong> 프로파일링.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">⏱️ UF Rate – 인터벌</div>
+        <div class="info-card-body">UF rate의 <strong>인터벌 모드(Interval mode)</strong> 프로파일링.</div>
+      </div>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-head" onclick="toggleStep(this)">
+        <div class="step-num" style="background:rgba(108,160,122,0.12);color:#105742">1</div>
+        <div class="step-content">
+          <div class="step-title">Profile 설정</div>
+          <div class="step-brief">화면에서 원하는 Profile 모드를 선택하고 설정한다.</div>
+        </div>
+        <div class="step-chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="step-detail">
+        <div class="step-detail-in">
+          <div class="detail-block">
+            <div class="detail-lbl">조작</div>
+            <div class="detail-text">화면의 <strong>Profile 버튼</strong>을 눌러 Na, HCO₃, UF rate 각각에 대해 원하는 프로파일 모드를 선택·설정한다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // ── Theme toggle ──────────────────────────────────────────────────────────
+  function toggleTheme() {
+    var html = document.documentElement;
+    var isDark = html.classList.contains('theme-dark');
+    html.classList.toggle('theme-dark', !isDark);
+    html.classList.toggle('theme-light', isDark);
+  }
+
+  // ── Step card expand/collapse ─────────────────────────────────────────────
+  function toggleStep(head) {
+    var detail = head.parentElement.querySelector('.step-detail');
+    var chev   = head.querySelector('.step-chev');
+    var isOpen = detail.classList.contains('open');
+    detail.classList.toggle('open', !isOpen);
+    chev.classList.toggle('open', !isOpen);
+  }
+
+  // ── Phase filter ──────────────────────────────────────────────────────────
+  function filterPhase(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    if (btn) btn.classList.add('active');
+    var groups = document.querySelectorAll('.phase-group');
+    var firstVisible = null;
+    groups.forEach(function(g) {
+      var match = cat === 'all' || g.getAttribute('data-category') === cat;
+      g.classList.toggle('show', match);
+      if (match && !firstVisible) firstVisible = g;
+    });
+    if (firstVisible) {
+      var bar = document.querySelector('.sticky-filter');
+      var barH = bar ? bar.getBoundingClientRect().height : 52;
+      var targetY = firstVisible.getBoundingClientRect().top + window.pageYOffset - barH - 16;
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+    }
+  }
+
+  // ── Scroll reveal ─────────────────────────────────────────────────────────
+  var revealEls = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  revealEls.forEach(function(el) { io.observe(el); });
+
+  // ── Menu close on outside click ───────────────────────────────────────────
+  document.addEventListener('click', function(e) {
+    var menu = document.querySelector('.viz-menu');
+    if (menu && !menu.contains(e.target)) {
+      var dd = menu.querySelector('.viz-menu-dropdown');
+      if (dd) dd.classList.remove('open');
+    }
+  });
+</script>
+</body>
+</html>
