@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>견적 검색 앱 사용 가이드 · Vantive</title>
+<style>
+:root {
+  --plum:#72256B; --plum-d:#5C1B56; --plum-light:rgba(114,37,107,0.09);
+  --cream:#FFFAEB; --pine:#105742; --pine-light:rgba(16,87,66,0.10);
+  --euca:#6CA07A; --euca-light:rgba(108,160,122,0.18);
+  --amber:#D4700A; --amber-light:rgba(212,112,10,0.12);
+  --teal:#0A7A8F; --teal-light:rgba(10,122,143,0.12);
+  --white:#FFFFFF; --text:#1C1C1E; --text2:#52525B; --text3:#A1A1AA;
+  --border:rgba(0,0,0,0.07); --border-p:rgba(114,37,107,0.18);
+  --r:14px; --r-xs:5px;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family:-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  background:var(--cream); color:var(--text); font-size:14px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── PAGE HEADER ── */
+.page-hdr {
+  background:linear-gradient(150deg,var(--plum-d) 0%,var(--plum) 60%,#8B3080 100%);
+  padding:40px 32px 36px; text-align:center; position:relative; overflow:hidden;
+}
+.page-hdr::before {
+  content:''; position:absolute; top:-60px; right:-60px;
+  width:260px; height:260px; border-radius:50%;
+  background:rgba(255,255,255,0.05); pointer-events:none;
+}
+.page-hdr::after {
+  content:''; position:absolute; bottom:-80px; left:-40px;
+  width:200px; height:200px; border-radius:50%;
+  background:rgba(255,255,255,0.04); pointer-events:none;
+}
+.page-hdr-logo {
+  font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase;
+  color:rgba(255,250,235,0.5); margin-bottom:8px;
+}
+.page-hdr h1 {
+  font-size:26px; font-weight:800; color:#fff; margin-bottom:8px; line-height:1.3;
+}
+.page-hdr p {
+  font-size:13px; color:rgba(255,250,235,0.7); max-width:500px; margin:0 auto;
+}
+.guide-badge {
+  display:inline-block; margin-top:16px;
+  background:rgba(255,250,235,0.18); border:1px solid rgba(255,250,235,0.28);
+  color:var(--cream); font-size:11px; font-weight:700;
+  padding:5px 16px; border-radius:20px; letter-spacing:0.5px;
+}
+
+/* ── TOC ── */
+.toc {
+  background:var(--white); border-bottom:1px solid var(--border);
+  padding:16px 24px; display:flex; gap:8px; flex-wrap:wrap;
+  position:sticky; top:0; z-index:100;
+}
+.toc-item {
+  display:flex; align-items:center; gap:6px;
+  font-size:12px; font-weight:600; color:var(--text2);
+  padding:5px 12px; border-radius:20px;
+  background:rgba(0,0,0,0.04); text-decoration:none;
+  border:1.5px solid transparent; transition:all .15s;
+}
+.toc-item:hover { background:var(--plum-light); color:var(--plum); border-color:var(--border-p); }
+.toc-num {
+  width:18px; height:18px; border-radius:50%;
+  background:var(--plum); color:#fff;
+  font-size:10px; font-weight:800;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+
+/* ── CONTENT ── */
+.content { max-width:860px; margin:0 auto; padding:32px 20px 60px; }
+
+/* ── SECTION ── */
+.section { margin-bottom:48px; }
+.sec-label {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase;
+  color:var(--plum); margin-bottom:10px;
+}
+.sec-num {
+  width:22px; height:22px; border-radius:50%; background:var(--plum); color:#fff;
+  font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center;
+}
+.section h2 {
+  font-size:20px; font-weight:800; color:var(--text); margin-bottom:6px; line-height:1.35;
+}
+.section > .desc {
+  font-size:13px; color:var(--text2); margin-bottom:20px; line-height:1.65;
+}
+
+/* ── PREVIEW FRAME ── */
+.frame {
+  background:var(--white); border-radius:var(--r);
+  box-shadow:0 4px 24px rgba(0,0,0,0.10); border:1px solid var(--border);
+  overflow:hidden; margin-bottom:24px;
+}
+.frame-title {
+  background:rgba(0,0,0,0.025); border-bottom:1px solid var(--border);
+  padding:9px 16px; font-size:11px; font-weight:700; color:var(--text3);
+  letter-spacing:0.5px; display:flex; align-items:center; gap:6px;
+}
+.frame-title::before { content:'●'; font-size:8px; color:var(--plum); }
+.frame-body { padding:20px; }
+
+/* ── ANNOTATED UI MOCKUPS ── */
+/* Header mockup */
+.ui-header {
+  background:linear-gradient(150deg,var(--plum-d) 0%,var(--plum) 60%,#8B3080 100%);
+  padding:16px 18px 0; border-radius:12px 12px 0 0; position:relative;
+}
+.ui-hdr-top {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;
+}
+.ui-logo-area { display:flex; flex-direction:column; gap:3px; }
+.ui-logo {
+  font-size:15px; font-weight:900; color:#fff; letter-spacing:0.5px;
+}
+.ui-tagline {
+  font-size:10px; font-weight:700; color:rgba(255,250,235,0.5);
+  letter-spacing:2px; text-transform:uppercase;
+}
+.ui-badge {
+  background:rgba(255,250,235,0.18); border:1px solid rgba(255,250,235,0.28);
+  color:var(--cream); font-size:11px; font-weight:700;
+  padding:4px 11px; border-radius:20px;
+}
+.ui-tabs {
+  display:flex; gap:0; margin-bottom:10px; border-bottom:2px solid rgba(255,250,235,0.15);
+}
+.ui-tab {
+  padding:8px 16px; font-size:12px; font-weight:700;
+  color:rgba(255,250,235,0.5); cursor:pointer; border-bottom:2px solid transparent;
+  margin-bottom:-2px;
+}
+.ui-tab.active {
+  color:#fff; border-bottom-color:#fff;
+}
+.ui-search {
+  position:relative; margin-bottom:10px;
+}
+.ui-search-inp {
+  width:100%; padding:10px 38px 10px 38px;
+  background:rgba(255,250,235,0.13);
+  border:1.5px solid rgba(255,250,235,0.25); border-radius:10px;
+  font-size:13px; color:rgba(255,250,235,0.9);
+  font-family:inherit;
+}
+.ui-search-ico {
+  position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  font-size:13px; color:rgba(255,250,235,0.55);
+}
+.ui-search-clr {
+  position:absolute; right:10px; top:50%; transform:translateY(-50%);
+  background:rgba(255,250,235,0.22); border-radius:50%;
+  width:20px; height:20px; font-size:10px; color:var(--cream);
+  display:flex; align-items:center; justify-content:center; font-weight:700;
+}
+.ui-hints {
+  display:flex; align-items:center; gap:5px; padding-bottom:10px;
+  font-size:10px; color:rgba(255,250,235,0.55);
+}
+.ui-hint-ex {
+  background:rgba(255,250,235,0.14); border:1px solid rgba(255,250,235,0.18);
+  color:rgba(255,250,235,0.9); border-radius:4px; padding:2px 7px;
+  font-size:10px; font-weight:600;
+}
+.ui-notice {
+  background:rgba(255,250,235,0.10); border-top:1px solid rgba(255,250,235,0.12);
+  padding:8px 18px; font-size:10.5px; color:rgba(255,250,235,0.65);
+  margin:0 -18px; border-radius:0 0 12px 12px;
+}
+
+/* Product card mockup */
+.ui-card {
+  background:var(--white); border-radius:12px;
+  border:1px solid var(--border); overflow:hidden;
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);
+}
+.ui-card-head {
+  display:flex; align-items:center; gap:10px;
+  padding:13px 14px 11px;
+}
+.ui-icode {
+  background:var(--plum-light); color:var(--plum);
+  border:1px solid var(--border-p); border-radius:5px;
+  font-size:10px; font-weight:800; padding:3px 7px;
+  font-family:monospace; white-space:nowrap; flex-shrink:0;
+}
+.ui-card-body { flex:1; }
+.ui-card-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:5px; }
+.ui-card-sub {
+  display:flex; align-items:center; gap:6px;
+  font-size:11px; color:var(--text2);
+}
+.ui-gbadge {
+  display:inline-block; padding:2px 7px; border-radius:4px;
+  font-size:9.5px; font-weight:700; text-transform:uppercase;
+}
+.g-pf { background:rgba(114,37,107,0.08); color:#8B3080; }
+.g-cwp { background:var(--teal-light); color:var(--teal); }
+.ui-star { font-size:16px; color:#F5C542; margin-left:auto; }
+.ui-qty {
+  display:flex; align-items:center; gap:10px;
+  padding:0 14px 13px; font-size:12px; color:var(--text2);
+}
+.ui-qty-btn {
+  width:26px; height:26px; border-radius:50%;
+  border:1.5px solid var(--border); background:var(--white);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:700; color:var(--text2);
+}
+.ui-qty-val {
+  font-size:14px; font-weight:800; color:var(--text); min-width:20px; text-align:center;
+}
+
+/* Summary panel mockup */
+.ui-summary {
+  background:linear-gradient(160deg,var(--plum-d) 0%,var(--plum) 100%);
+  border-radius:12px; padding:18px; color:var(--cream);
+}
+.ui-summary-title {
+  font-size:12px; font-weight:800; color:rgba(255,250,235,0.65);
+  letter-spacing:1px; text-transform:uppercase; margin-bottom:14px;
+  display:flex; align-items:center; gap:6px;
+}
+.ui-sum-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:6px 0; border-bottom:1px solid rgba(255,250,235,0.1);
+}
+.ui-sum-row:last-child { border-bottom:none; }
+.ui-sum-lbl { font-size:12px; color:rgba(255,250,235,0.65); }
+.ui-sum-val { font-size:14px; font-weight:800; color:#fff; font-family:monospace; }
+
+.ui-svc {
+  display:flex; align-items:center; gap:8px;
+  background:rgba(255,250,235,0.08); border-radius:10px;
+  padding:10px 14px; margin:10px 0; flex-wrap:wrap;
+}
+.ui-svc-chk { font-size:12px; color:rgba(255,250,235,0.85); font-weight:600; display:flex; align-items:center; gap:6px; }
+.ui-svc-rate {
+  background:rgba(255,250,235,0.15); border:1px solid rgba(255,250,235,0.22);
+  padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; color:#fff;
+}
+.ui-svc-spacer { flex:1; }
+.ui-hr-inp {
+  display:flex; align-items:center; gap:6px; font-size:11px; color:rgba(255,250,235,0.75);
+}
+.ui-hr-box {
+  background:rgba(255,250,235,0.15); border:1px solid rgba(255,250,235,0.22);
+  border-radius:8px; padding:4px 10px; font-size:13px; font-weight:800; color:#fff;
+  min-width:36px; text-align:center;
+}
+
+.ui-discount {
+  display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin:10px 0;
+}
+.ui-disc-lbl { font-size:11px; color:rgba(255,250,235,0.65); }
+.ui-disc-inp {
+  background:rgba(255,250,235,0.12); border:1px solid rgba(255,250,235,0.2);
+  border-radius:8px; padding:4px 8px; font-size:12px; font-weight:800; color:#fff;
+  width:44px; text-align:center;
+}
+.ui-disc-btn {
+  padding:5px 11px; border-radius:20px; font-size:11px; font-weight:700;
+  border:1.5px solid rgba(255,250,235,0.2); color:rgba(255,250,235,0.8);
+  background:rgba(255,250,235,0.08); cursor:pointer;
+}
+.ui-disc-btn.active {
+  background:rgba(255,250,235,0.9); color:var(--plum); border-color:transparent;
+}
+
+.ui-total {
+  background:linear-gradient(135deg,#0f6b4a 0%,var(--pine) 60%,#1a7a58 100%);
+  border-radius:10px; padding:14px 16px; margin-top:12px;
+}
+.ui-total-label { font-size:11px; font-weight:700; color:rgba(255,250,235,0.7); margin-bottom:4px; }
+.ui-total-val { font-size:22px; font-weight:900; color:#fff; font-family:monospace; letter-spacing:-0.5px; }
+.ui-total-sub { font-size:10px; color:rgba(255,250,235,0.6); margin-top:4px; line-height:1.5; }
+
+.ui-clr-btn {
+  width:100%; padding:11px; border-radius:10px; margin-top:10px;
+  background:rgba(255,250,235,0.08); border:1.5px solid rgba(255,250,235,0.15);
+  color:rgba(255,250,235,0.6); font-size:12px; font-weight:600; cursor:pointer;
+  text-align:center;
+}
+
+.ui-memo {
+  width:100%; padding:10px 12px; border-radius:10px; margin-top:10px;
+  background:rgba(255,250,235,0.08); border:1px solid rgba(255,250,235,0.15);
+  color:rgba(255,250,235,0.5); font-size:12px; font-family:inherit;
+  min-height:60px; resize:none;
+}
+
+.ui-print-btn {
+  width:100%; padding:13px; border-radius:10px; margin-top:10px;
+  background:rgba(255,250,235,0.95); border:none;
+  color:var(--plum-d); font-size:13px; font-weight:800; cursor:pointer;
+  text-align:center; display:flex; align-items:center; justify-content:center; gap:6px;
+}
+
+/* ── ANNOTATION SYSTEM ── */
+.anno-wrap { position:relative; }
+.anno-row {
+  display:grid; grid-template-columns:1fr 1px 320px;
+  gap:0; margin-bottom:28px;
+}
+.anno-ui { align-self:start; }
+.anno-divider { background:var(--border); }
+.anno-list { padding-left:20px; align-self:start; }
+.anno-item {
+  display:flex; gap:10px; margin-bottom:14px; align-items:flex-start;
+}
+.anno-dot {
+  width:24px; height:24px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:800; color:#fff; margin-top:1px;
+}
+.anno-item p { font-size:12.5px; line-height:1.6; color:var(--text); }
+.anno-item strong { display:block; font-size:12px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.anno-item span { font-size:11.5px; color:var(--text2); line-height:1.55; }
+
+/* callout highlights on ui */
+.hl {
+  outline:3px solid;
+  outline-offset:2px; border-radius:4px;
+  position:relative;
+}
+.hl-a { outline-color:#E05D00; }
+.hl-b { outline-color:#2E86C1; }
+.hl-c { outline-color:#229954; }
+.hl-d { outline-color:#8E44AD; }
+.hl-e { outline-color:#E91E63; }
+.hl-f { outline-color:#FF6B35; }
+
+/* ── INFO CARDS ── */
+.info-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px;
+  margin-bottom:28px;
+}
+.info-card {
+  background:var(--white); border-radius:12px;
+  border:1px solid var(--border); padding:18px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+.info-icon { font-size:22px; margin-bottom:8px; }
+.info-card h3 { font-size:13px; font-weight:800; color:var(--text); margin-bottom:5px; }
+.info-card p { font-size:12px; color:var(--text2); line-height:1.6; }
+
+/* ── STEP CARDS ── */
+.steps { display:flex; flex-direction:column; gap:12px; margin-bottom:24px; }
+.step {
+  display:flex; gap:14px; align-items:flex-start;
+  background:var(--white); border-radius:12px;
+  border:1px solid var(--border); padding:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.step-num {
+  width:32px; height:32px; border-radius:50%; flex-shrink:0;
+  background:var(--plum); color:#fff;
+  font-size:14px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+}
+.step-body h3 { font-size:13.5px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.step-body p { font-size:12.5px; color:var(--text2); line-height:1.6; }
+.step-tip {
+  margin-top:6px; font-size:11px;
+  background:var(--plum-light); color:var(--plum);
+  padding:5px 10px; border-radius:6px; display:inline-block; font-weight:600;
+}
+
+/* ── TAG / BADGE LEGEND ── */
+.legend { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.leg-item {
+  display:flex; align-items:center; gap:6px;
+  padding:6px 12px; border-radius:8px;
+  background:var(--white); border:1px solid var(--border);
+  font-size:12px;
+}
+.leg-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+/* ── TIP BOX ── */
+.tip-box {
+  border-radius:10px; padding:14px 16px; margin-bottom:16px;
+  display:flex; gap:10px; align-items:flex-start;
+}
+.tip-box.info { background:var(--teal-light); border:1px solid rgba(10,122,143,0.2); }
+.tip-box.warn { background:var(--amber-light); border:1px solid rgba(212,112,10,0.2); }
+.tip-box.success { background:var(--euca-light); border:1px solid rgba(108,160,122,0.25); }
+.tip-box-ico { font-size:16px; flex-shrink:0; margin-top:1px; }
+.tip-box p { font-size:12.5px; color:var(--text); line-height:1.6; }
+.tip-box strong { font-weight:700; }
+
+/* ── DIVIDER ── */
+.divider { height:1px; background:var(--border); margin:40px 0; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:680px){
+  .anno-row { grid-template-columns:1fr; }
+  .anno-divider { display:none; }
+  .anno-list { padding-left:0; padding-top:16px; border-top:1px solid var(--border); }
+  .toc { display:none; }
+  .page-hdr { padding:28px 20px 24px; }
+  .page-hdr h1 { font-size:20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-hdr">
+  <div class="page-hdr-logo">Vantive Korea · Technical Service</div>
+  <h1>견적 검색 앱<br>사용 가이드</h1>
+  <p>2026 Spare Parts 가격 검색 및 견적서 생성 도구의 각 기능을 안내합니다</p>
+  <span class="guide-badge">2026 SPARE · 사용자 가이드</span>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <a class="toc-item" href="#sec1"><span class="toc-num">1</span>화면 구성</a>
+  <a class="toc-item" href="#sec2"><span class="toc-num">2</span>헤더 영역</a>
+  <a class="toc-item" href="#sec3"><span class="toc-num">3</span>검색 기능</a>
+  <a class="toc-item" href="#sec4"><span class="toc-num">4</span>부품 카드</a>
+  <a class="toc-item" href="#sec5"><span class="toc-num">5</span>견적 요약</a>
+  <a class="toc-item" href="#sec6"><span class="toc-num">6</span>견적서 출력</a>
+  <a class="toc-item" href="#sec7"><span class="toc-num">7</span>이용 흐름</a>
+</div>
+
+<div class="content">
+
+  <!-- ───────────────────────────────────────── -->
+  <!-- SECTION 1: OVERVIEW -->
+  <!-- ───────────────────────────────────────── -->
+  <div class="section" id="sec1">
+    <div class="sec-label"><span class="sec-num">1</span>화면 구성 개요</div>
+    <h2>앱의 3가지 주요 영역</h2>
+    <p class="desc">이 앱은 크게 <strong>헤더(검색 영역)</strong>, <strong>부품 카드 목록</strong>, <strong>견적 요약 패널</strong> 세 구역으로 나뉩니다.</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-icon">🔍</div>
+        <h3>① 헤더 · 검색 영역</h3>
+        <p>부품 이름이나 코드를 입력해 검색하고, 탭으로 콘텐츠 유형을 전환할 수 있습니다.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">📦</div>
+        <h3>② 부품 카드 목록</h3>
+        <p>검색 결과로 나타난 부품별 카드입니다. 수량 조절과 즐겨찾기 추가가 가능합니다.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🧾</div>
+        <h3>③ 견적 요약 패널</h3>
+        <p>즐겨찾기에 담긴 부품의 합계, 서비스 요금, 할인을 계산해 최종 견적을 보여줍니다.</p>
+      </div>
+    </div>
+
+    <div class="tip-box info">
+      <span class="tip-box-ico">ℹ️</span>
+      <p><strong>가격 기준 안내:</strong> 모든 가격은 2026년 4월 1일 기준이며, 환율에 따라 변동될 수 있습니다. 부가세(VAT) 별도 / 포함 금액이 함께 표시됩니다.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ───────────────────────────────────────── -->
+  <!-- SECTION 2: HEADER -->
+  <!-- ───────────────────────────────────────── -->
+  <div class="section" id="sec2">
+    <div class="sec-label"><span class="sec-num">2</span>헤더 영역</div>
+    <h2>로고 · 페이지 레이블 · 공지 바</h2>
+    <p class="desc">화면 상단에 고정된 헤더입니다. 스크롤해도 항상 보입니다.</p>
+
+    <div class="frame">
+      <div class="frame-title">헤더 영역 미리보기</div>
+      <div class="frame-body" style="background:#f5f0fb; padding:16px;">
+        <div class="anno-row">
+          <div class="anno-ui">
+            <div class="ui-header">
+              <div class="ui-hdr-top">
+                <div class="ui-logo-area hl hl-a" style="padding:4px 6px; border-radius:6px;">
+                  <!-- Vantive 로고 SVG 워드마크 모사 -->
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <svg width="90" height="22" viewBox="0 0 120 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <text x="0" y="22" font-family="-apple-system,sans-serif" font-size="22" font-weight="800" fill="white" letter-spacing="-0.5">Vantive</text>
+                    </svg>
+                  </div>
+                  <div class="ui-tagline">2026 SPARE PARTS PRICE LIST</div>
+                  <div style="font-size:11px; font-weight:700; color:rgba(255,250,235,0.85); margin-top:3px; letter-spacing:0.5px;">Content</div>
+                </div>
+                <div class="hl hl-b" style="border-radius:20px;">
+                  <div class="ui-badge">3</div>
+                </div>
+              </div>
+              <div class="ui-notice hl hl-c" style="border-radius:8px; margin:0;">
+                ⓘ 2026년 4월 1일 기준 · 환율에 따라 부품 가격이 변동될 수 있습니다 · 부가세 별도 기준
+              </div>
+            </div>
+          </div>
+          <div class="anno-divider"></div>
+          <div class="anno-list">
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#E05D00;">A</div>
+              <div>
+                <strong>로고 · 제목 · 페이지 레이블</strong>
+                <span><b>Vantive</b> 로고(워드마크) 아래에 <b>2026 SPARE PARTS PRICE LIST</b> 부제와 현재 보고 있는 목록 이름(<b>Content</b>)이 표시됩니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#2E86C1;">B</div>
+              <div>
+                <strong>즐겨찾기 개수 배지</strong>
+                <span>현재 견적 요약에 담긴 부품 수를 표시합니다. ★ 버튼으로 부품을 추가할 때마다 숫자가 올라갑니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#229954;">C</div>
+              <div>
+                <strong>가격 기준 공지 바</strong>
+                <span>기준 날짜(2026년 4월 1일), 환율 변동 주의, 부가세 별도 기준임을 요약 안내합니다. 견적 작성 전 반드시 확인하세요.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ───────────────────────────────────────── -->
+  <!-- SECTION 3: SEARCH -->
+  <!-- ───────────────────────────────────────── -->
+  <div class="section" id="sec3">
+    <div class="sec-label"><span class="sec-num">3</span>검색 기능</div>
+    <h2>부품 검색 입력창</h2>
+    <p class="desc">부품 코드, 영문 이름, 제품군 키워드 등을 자유롭게 입력하면 실시간으로 결과가 필터링됩니다.</p>
+
+    <div class="frame">
+      <div class="frame-title">검색창 미리보기</div>
+      <div class="frame-body" style="background:#f5f0fb;">
+        <div class="anno-row">
+          <div class="anno-ui">
+            <div style="background:linear-gradient(150deg,var(--plum-d) 0%,var(--plum) 100%); padding:16px; border-radius:12px;">
+              <div class="ui-search hl hl-a" style="border-radius:12px;">
+                <span class="ui-search-ico">🔍</span>
+                <input class="ui-search-inp" value="module" readonly style="pointer-events:none;">
+                <div class="ui-search-clr">✕</div>
+              </div>
+              <div class="ui-hints hl hl-b" style="border-radius:8px; padding:4px 6px;">
+                <span style="color:rgba(255,250,235,0.75); font-weight:800; font-size:11px;">>>></span>
+                <span style="font-size:10px; color:rgba(255,250,235,0.6);">e.g.</span>
+                <span class="ui-hint-ex">SC6021</span>
+                <span class="ui-hint-ex">blood pump</span>
+                <span class="ui-hint-ex">955823</span>
+              </div>
+            </div>
+          </div>
+          <div class="anno-divider"></div>
+          <div class="anno-list">
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#E05D00;">A</div>
+              <div>
+                <strong>검색 입력창</strong>
+                <span>부품 코드(예: <code style="background:var(--plum-light); color:var(--plum); padding:1px 5px; border-radius:3px; font-size:11px;">G5006802</code>) 또는 영문 이름 키워드(예: <code style="background:var(--plum-light); color:var(--plum); padding:1px 5px; border-radius:3px; font-size:11px;">module</code>)를 입력하세요. 입력 즉시 목록이 필터링됩니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#E05D00; opacity:0.7; font-size:9px;">A+</div>
+              <div>
+                <strong>✕ 지우기 버튼</strong>
+                <span>검색어가 있을 때 입력창 우측에 나타납니다. 누르면 검색어가 초기화되고 전체 목록이 다시 표시됩니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#2E86C1;">B</div>
+              <div>
+                <strong>검색 힌트 예시</strong>
+                <span>자주 쓰는 검색 패턴을 안내합니다. 부품 코드 / 영문명 / 숫자 코드 모두 검색 가능합니다.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box warn">
+      <span class="tip-box-ico">💡</span>
+      <p><strong>검색 팁:</strong> 부품명 전체를 입력하지 않아도 됩니다. <code style="background:rgba(0,0,0,0.06); padding:1px 5px; border-radius:3px;">module</code>, <code style="background:rgba(0,0,0,0.06); padding:1px 5px; border-radius:3px;">pump</code>, <code style="background:rgba(0,0,0,0.06); padding:1px 5px; border-radius:3px;">clamp</code> 같은 단어 일부만 입력해도 관련 부품이 모두 나타납니다.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ───────────────────────────────────────── -->
+  <!-- SECTION 4: PRODUCT CARD -->
+  <!-- ───────────────────────────────────────── -->
+  <div class="section" id="sec4">
+    <div class="sec-label"><span class="sec-num">4</span>부품 카드</div>
+    <h2>검색 결과 카드</h2>
+    <p class="desc">각 부품은 카드 형태로 표시됩니다. 코드, 이름, 제품군 태그, 가격, 수량, 즐겨찾기 기능이 포함되어 있습니다.</p>
+
+    <div class="frame">
+      <div class="frame-title">부품 카드 미리보기</div>
+      <div class="frame-body">
+        <div class="anno-row">
+          <div class="anno-ui" style="max-width:380px;">
+            <div class="ui-card">
+              <div class="ui-card-head">
+                <div class="ui-icode hl hl-a" style="border-radius:5px;">G5006802</div>
+                <div class="ui-card-body">
+                  <div class="ui-card-title hl hl-b" style="border-radius:4px; padding:2px 4px;">RETURN CLAMP ASSY</div>
+                  <div class="ui-card-sub">
+                    <span class="ui-gbadge g-pf hl hl-c" style="border-radius:4px;">PRISMAFLEX</span>
+                    <span style="font-size:11px; color:var(--text2);">VAT포함 <strong style="color:var(--plum);">1,353,000원</strong> × 2 = 2,706,000원</span>
+                  </div>
+                </div>
+                <div class="ui-star hl hl-d" style="border-radius:50%; padding:2px 4px;">★</div>
+              </div>
+              <div class="ui-qty">
+                <span style="font-size:11px; color:var(--text2);">수량</span>
+                <div class="ui-qty-btn hl hl-e">−</div>
+                <div class="ui-qty-val hl hl-e" style="outline:3px solid #E91E63; outline-offset:2px; border-radius:4px; padding:0 4px;">2</div>
+                <div class="ui-qty-btn hl hl-e">+</div>
+              </div>
+            </div>
+          </div>
+          <div class="anno-divider"></div>
+          <div class="anno-list">
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#E05D00;">A</div>
+              <div>
+                <strong>부품 코드</strong>
+                <span>Vantive 공식 파트 넘버입니다. G, W 등 알파벳 prefix에 따라 계열이 구분됩니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#2E86C1;">B</div>
+              <div>
+                <strong>부품명</strong>
+                <span>공식 영문 제품명입니다. 탭하면 상세 가격 정보(VAT 별도/포함)가 펼쳐집니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#229954;">C</div>
+              <div>
+                <strong>제품군 태그 &amp; 가격</strong>
+                <span>어느 장비에 사용되는 부품인지 색상 태그로 구분됩니다. 우측에 VAT 포함 단가 × 수량 = 소계가 표시됩니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#8E44AD;">D</div>
+              <div>
+                <strong>즐겨찾기(★) 버튼</strong>
+                <span>눌러서 견적 요약에 추가합니다. 노란색이 되면 추가된 상태입니다. 상단 배지 숫자도 함께 증가합니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#E91E63;">E</div>
+              <div>
+                <strong>수량 조절 (− / 숫자 / +)</strong>
+                <span>− 버튼으로 줄이고, + 버튼으로 늘립니다. 수량에 따라 소계 금액이 자동 업데이트됩니다.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product group badge legend -->
+    <h3 style="font-size:13px; font-weight:700; margin-bottom:10px; color:var(--text2);">제품군 태그 색상 의미</h3>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#8B3080;"></div>PRISMAFLEX</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--teal);"></div>CWP</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--pine);"></div>PRISMAX</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--indigo,#3B4DC8);"></div>AK98</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--amber);"></div>APD</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ───────────────────────────────────────── -->
+  <!-- SECTION 5: QUOTE SUMMARY -->
+  <!-- ───────────────────────────────────────── -->
+  <div class="section" id="sec5">
+    <div class="sec-label"><span class="sec-num">5</span>견적 요약 패널</div>
+    <h2>소계 · 서비스 요금 · 할인 · 최종 금액</h2>
+    <p class="desc">화면 하단의 보라색 패널입니다. 즐겨찾기에 추가한 부품들의 합산 견적을 실시간으로 계산합니다.</p>
+
+    <div class="frame">
+      <div class="frame-title">견적 요약 패널 미리보기</div>
+      <div class="frame-body" style="background:#f5f0fb;">
+        <div class="anno-row">
+          <div class="anno-ui" style="max-width:380px;">
+            <div class="ui-summary">
+              <div class="ui-summary-title hl hl-a" style="border-radius:6px; padding:4px 6px;">
+                📋 견적 요약 (3개 품목)
+              </div>
+              <div class="hl hl-b" style="border-radius:8px; padding:4px 6px;">
+                <div class="ui-sum-row">
+                  <span class="ui-sum-lbl">소계 (VAT 별도)</span>
+                  <span class="ui-sum-val">18,670,000원</span>
+                </div>
+                <div class="ui-sum-row">
+                  <span class="ui-sum-lbl">소계 (VAT 포함)</span>
+                  <span class="ui-sum-val">20,537,000원</span>
+                </div>
+              </div>
+              <div class="ui-svc hl hl-c" style="border-radius:10px;">
+                <div class="ui-svc-chk">☑ Service Fee <span class="ui-svc-rate">150,000원 / hr</span></div>
+                <div class="ui-svc-spacer"></div>
+                <div class="ui-hr-inp">
+                  <div class="ui-hr-box">2</div>
+                  <span>hr</span>
+                </div>
+              </div>
+              <div class="ui-discount hl hl-d" style="border-radius:8px; padding:4px 6px;">
+                <span class="ui-disc-lbl">할인율</span>
+                <input class="ui-disc-inp" value="5" readonly>
+                <span class="ui-disc-lbl">%</span>
+                <button class="ui-disc-btn active">5%</button>
+                <button class="ui-disc-btn">10%</button>
+                <button class="ui-disc-btn">15%</button>
+                <button class="ui-disc-btn">20%</button>
+              </div>
+              <div class="ui-total hl hl-e" style="border-radius:10px;">
+                <div class="ui-total-label">✓ 최종 금액 (VAT 포함)</div>
+                <div class="ui-total-val">19,840,150원</div>
+                <div class="ui-total-sub">서비스 요금 VAT포함 330,000원 (2hr) · 할인 −1,026,850원 (5%)</div>
+              </div>
+              <button class="ui-clr-btn hl hl-f" style="border-radius:10px;">🗑 즐겨찾기 전체 삭제</button>
+            </div>
+          </div>
+          <div class="anno-divider"></div>
+          <div class="anno-list">
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#E05D00;">A</div>
+              <div>
+                <strong>견적 요약 헤더</strong>
+                <span>즐겨찾기에 추가된 부품 수가 괄호 안에 표시됩니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#2E86C1;">B</div>
+              <div>
+                <strong>소계 (VAT 별도 / VAT 포함)</strong>
+                <span>즐겨찾기 품목 합산 금액입니다. 공급가와 부가세 포함 두 줄로 나뉩니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#229954;">C</div>
+              <div>
+                <strong>Service Fee (서비스 요금)</strong>
+                <span>체크박스로 포함 여부를 설정하고, 시간(hr)을 입력합니다. 150,000원/hr 기준으로 자동 계산됩니다. 우측에 VAT 별도·포함 금액이 표시됩니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#8E44AD;">D</div>
+              <div>
+                <strong>할인율 선택</strong>
+                <span>직접 입력하거나 5% / 10% / 15% / 20% 버튼을 눌러 선택합니다. 흰색 배경이 현재 적용 중인 할인율입니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#E91E63;">E</div>
+              <div>
+                <strong>최종 금액 (녹색 영역)</strong>
+                <span>서비스 요금과 할인이 반영된 최종 VAT 포함 금액입니다. 아래 줄에 구성 내역이 요약됩니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#FF6B35;">F</div>
+              <div>
+                <strong>즐겨찾기 전체 삭제</strong>
+                <span>견적 요약에 담긴 모든 부품을 한 번에 초기화합니다. 새 견적 작성 시 사용합니다.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ───────────────────────────────────────── -->
+  <!-- SECTION 6: PRINT / PDF -->
+  <!-- ───────────────────────────────────────── -->
+  <div class="section" id="sec6">
+    <div class="sec-label"><span class="sec-num">6</span>견적서 출력</div>
+    <h2>메모 입력 &amp; PDF 저장</h2>
+    <p class="desc">견적서를 인쇄하거나 PDF로 저장하기 전에 메모를 추가할 수 있습니다.</p>
+
+    <div class="frame">
+      <div class="frame-title">메모 &amp; 출력 영역 미리보기</div>
+      <div class="frame-body" style="background:#f5f0fb;">
+        <div class="anno-row">
+          <div class="anno-ui" style="max-width:380px;">
+            <div class="ui-summary" style="padding-top:12px;">
+              <div style="font-size:11px; font-weight:700; color:rgba(255,250,235,0.55); margin-bottom:6px; letter-spacing:0.5px;">📝 예모</div>
+              <textarea class="ui-memo hl hl-a" style="border-radius:10px;" placeholder="견적 관련 메모를 입력하세요..." readonly></textarea>
+              <button class="ui-print-btn hl hl-b" style="border-radius:10px;">
+                🖨 견적서 출력 / PDF 저장
+              </button>
+            </div>
+          </div>
+          <div class="anno-divider"></div>
+          <div class="anno-list">
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#E05D00;">A</div>
+              <div>
+                <strong>예모 (메모) 입력란</strong>
+                <span>병원명, 담당자, 특이사항 등 견적서에 포함할 추가 내용을 자유롭게 입력합니다. 입력한 내용은 PDF에 그대로 반영됩니다.</span>
+              </div>
+            </div>
+            <div class="anno-item">
+              <div class="anno-dot" style="background:#2E86C1;">B</div>
+              <div>
+                <strong>견적서 출력 / PDF 저장 버튼</strong>
+                <span>누르면 브라우저 인쇄 다이얼로그가 열립니다. "PDF로 저장"을 선택하면 파일로 저장됩니다. 견적 요약 전체가 포맷된 문서로 출력됩니다.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box success">
+      <span class="tip-box-ico">✅</span>
+      <p><strong>PDF 저장 방법:</strong> 버튼 클릭 → 브라우저 인쇄 창 → 대상(프린터) 선택란에서 <strong>"PDF로 저장"</strong> 선택 → 저장 위치 지정 후 저장.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ───────────────────────────────────────── -->
+  <!-- SECTION 7: WORKFLOW -->
+  <!-- ───────────────────────────────────────── -->
+  <div class="section" id="sec7">
+    <div class="sec-label"><span class="sec-num">7</span>이용 흐름</div>
+    <h2>견적 작성 단계별 흐름</h2>
+    <p class="desc">처음부터 견적서 출력까지 권장 순서입니다.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>부품 검색</h3>
+          <p>검색창에 부품 코드 또는 키워드를 입력합니다. 예: <code style="background:var(--plum-light); color:var(--plum); padding:1px 6px; border-radius:4px; font-size:12px;">module</code>, <code style="background:var(--plum-light); color:var(--plum); padding:1px 6px; border-radius:4px; font-size:12px;">G5006802</code>, <code style="background:var(--plum-light); color:var(--plum); padding:1px 6px; border-radius:4px; font-size:12px;">blood pump</code></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>수량 조절 &amp; 즐겨찾기 추가</h3>
+          <p>카드의 −/+ 버튼으로 수량을 맞춘 뒤, ★ 버튼을 눌러 견적에 추가합니다. 여러 부품을 반복해서 추가하세요.</p>
+          <span class="step-tip">★이 노란색으로 바뀌면 추가 완료</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>서비스 요금 설정</h3>
+          <p>Service Fee 체크박스를 켜고, 작업 시간(hr)을 입력합니다. 요금이 자동 계산됩니다.</p>
+          <span class="step-tip">시간당 150,000원 (VAT 별도)</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>할인율 적용</h3>
+          <p>5% / 10% / 15% / 20% 버튼 중 하나를 선택하거나 직접 입력합니다. 최종 금액이 즉시 반영됩니다.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>메모 입력 (선택)</h3>
+          <p>고객사, 담당자, 작업 일정 등 특이사항을 메모란에 입력합니다.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <h3>견적서 출력 / PDF 저장</h3>
+          <p>하단의 초록 버튼을 눌러 인쇄 또는 PDF로 저장합니다. 완료 후 "즐겨찾기 전체 삭제"로 초기화하면 다음 견적을 바로 시작할 수 있습니다.</p>
+          <span class="step-tip">새 견적 시작 전 반드시 즐겨찾기 초기화</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box info">
+      <span class="tip-box-ico">ℹ️</span>
+      <p><strong>탭 전환:</strong> Content 탭과 ICE LIST 탭을 전환해도 즐겨찾기와 견적 요약은 유지됩니다. 두 탭에서 부품을 함께 담아 하나의 견적서로 출력할 수 있습니다.</p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="text-align:center; padding:24px 0 8px; border-top:1px solid var(--border);">
+    <div style="font-size:11px; color:var(--text3); letter-spacing:1px; text-transform:uppercase; font-weight:700;">
+      Vantive Korea · Technical Service · 2026 Spare Parts Guide
+    </div>
+  </div>
+
+</div><!-- /content -->
+</body>
+</html>
